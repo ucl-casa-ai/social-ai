@@ -2,6 +2,25 @@
 
 A fun little web application that fetches public data from UCL Profiles and uses a local Large Language Model (LLM) to generate social media content. 🚀
 
+## 🖼️ Screenshots
+
+<p align="center">
+  <img src="./docs/screenshots/interface.png" alt="Main page of the interface" width="48%">
+  &nbsp; &nbsp;
+  <img src="./docs/screenshots/profile.png" alt="Loaded Profile of user from UCL Profiles.." width="48%">
+</p>
+<p align="center">
+  <em><b>Left:</b> The main page for the interface. <b>Right:</b> Loaded Profile of user from UCL Profiles.</em>
+</p>
+<br>
+<p align="center">
+  <img src="./docs/screenshots/social-post-bluesky.png" alt="A generated social post from a research paper, showing the AI-written text." width="80%">
+</p>
+<p align="center">
+  <em>A generated social post from a research paper, showing the AI-written text.</em>
+</p>
+
+
 ## ✨ What it does
 
 This application allows you to:
