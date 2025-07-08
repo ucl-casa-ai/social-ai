@@ -1,0 +1,46 @@
+<%- include('partials/header', { title: 'OAuth Authorization Code', page: 'oauth-callback' }) %>
+  <div class="container-fluid py-4 flex-grow-1">
+    <main>
+      <!-- Success View -->
+      <div id="success-view">
+        <header class="text-center mb-4">
+          <h1>ORCID Authorisation Successful</h1>
+          <p class="lead">You can now copy the authorisation code below and paste it into your command line.</p>
+        </header>
+        <div class="row justify-content-center">
+          <div class="col-md-8 col-lg-6">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Your Authorisation Code:</h5>
+                <div class="input-group">
+                  <input type="text" id="auth-code" class="form-control form-control-lg bg-light" value="<%= code %>" readonly>
+                  <button class="btn btn-primary" type="button" id="copy-code-btn">
+                    <i class="bi bi-clipboard"></i> Copy
+                  </button>
+                </div>
+                <div class="form-text mt-2">
+                  This code is a single-use token and will expire shortly.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Error View (hidden by default) -->
+      <div id="error-view" class="d-none">
+        <header class="text-center mb-4">
+          <h1>Authorisation Failed</h1>
+        </header>
+        <div class="row justify-content-center">
+          <div class="col-md-8 col-lg-6">
+            <div class="alert alert-danger" role="alert">
+              <h4 class="alert-heading">An error occurred</h4>
+              <p id="error-message" class="mb-0"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+<%- include('partials/footer') %>

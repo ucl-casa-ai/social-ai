@@ -1,0 +1,95 @@
+/* Custom Styles for UCL Profile Fetcher */
+
+/* General link styling: remove underline by default */
+a {
+  text-decoration: none;
+}
+
+/* Style for the JSON output area */
+#toggle-icon {
+  transition: transform 0.2s ease-in-out;
+}
+
+#results-container.collapsed #toggle-icon {
+  transform: rotate(-90deg);
+}
+
+#results-container.collapsed #results-body {
+  display: none;
+}
+
+/* Styles for collapsible summary box */
+#summary-toggle-icon {
+  transition: transform 0.2s ease-in-out;
+}
+
+#summary-container.collapsed #summary-toggle-icon {
+  transform: rotate(-90deg);
+}
+
+#summary-container.collapsed > .card > .card-body {
+  display: none;
+}
+
+/* Styles for collapsible publications box */
+#publications-toggle-icon {
+  transition: transform 0.2s ease-in-out;
+}
+
+#publications-container.collapsed #publications-toggle-icon {
+  transform: rotate(-90deg);
+}
+
+#publications-container.collapsed > .card > .card-body {
+  display: none;
+}
+
+/* Styles for collapsible grants box */
+#grants-toggle-icon {
+  transition: transform 0.2s ease-in-out;
+}
+
+#grants-container.collapsed #grants-toggle-icon {
+  transform: rotate(-90deg);
+}
+
+#grants-container.collapsed > .card > .card-body {
+  display: none;
+}
+
+/* Styles for collapsible grants box */
+#grants-toggle-icon {
+  transition: transform 0.2s ease-in-out;
+}
+
+#grants-container.collapsed #grants-toggle-icon {
+  transform: rotate(-90deg);
+}
+
+#grants-container.collapsed > .card > .card-body {
+  display: none;
+}
+
+#results-area {
+  background-color: #ededed;
+  color: #f1f1f1;
+  padding: 1rem;
+  border-radius: 0 0 var(--bs-card-border-radius) var(--bs-card-border-radius); /* Match Bootstrap card radius */
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-family: "SF Mono", "Consolas", "Menlo", monospace;
+  font-size: 0.9rem;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+/* Styles for the summary links */
+.link-content {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.link-url {
+  font-size: 0.85rem;
+}

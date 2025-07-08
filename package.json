@@ -1,0 +1,20 @@
+{
+  "name": "social-ai",
+  "version": "1.0.0",
+  "description": "A CLI script to fetch UCL profile data and format it with some AI thrown in.",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "live": "nodemon server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "dotenv": "^17.0.1",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "helmet": "^8.1.0",
+    "node-fetch": "^3.3.2",
+    "nodemon": "^3.1.10"
+  }
+}
