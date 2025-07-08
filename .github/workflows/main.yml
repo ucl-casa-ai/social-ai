@@ -39,5 +39,5 @@ jobs:
     - name: Build the Static Site Docker image
       run: |
          docker build --file ./Dockerfile --tag ghcr.io/ucl-casa-ai/social-ai:latest .
-         docker push ghcr.io/ucl-casa-ce/social-ai:latest
+         docker push ghcr.io/ucl-casa-ai/social-ai:latest
     
