@@ -31,6 +31,18 @@ a {
   display: none;
 }
 
+/* Styles for collapsible teaching box */
+#teaching-toggle-icon {
+  transition: transform 0.2s ease-in-out;
+}
+
+#teaching-container.collapsed #teaching-toggle-icon {
+  transform: rotate(-90deg);
+}
+
+#teaching-container.collapsed > .card > .card-body {
+  display: none;
+}
 /* Styles for collapsible publications box */
 #publications-toggle-icon {
   transition: transform 0.2s ease-in-out;
@@ -41,19 +53,6 @@ a {
 }
 
 #publications-container.collapsed > .card > .card-body {
-  display: none;
-}
-
-/* Styles for collapsible grants box */
-#grants-toggle-icon {
-  transition: transform 0.2s ease-in-out;
-}
-
-#grants-container.collapsed #grants-toggle-icon {
-  transform: rotate(-90deg);
-}
-
-#grants-container.collapsed > .card > .card-body {
   display: none;
 }
 
@@ -92,4 +91,13 @@ a {
 
 .link-url {
   font-size: 0.85rem;
+}
+
+.summary-stat-link {
+  cursor: pointer;
+  transition: background-color 0.15s ease-in-out;
+}
+
+.summary-stat-link:hover {
+  background-color: #f8f9fa; /* A light grey, common for hover effects */
 }

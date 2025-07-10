@@ -8,8 +8,8 @@ dotenv.config({ debug: false, quiet: true });
 /**
  * Generates a completion from the OpenWebUI API.
  * @param {string} model - The model to use (e.g., 'gemma3').
- * @param {Array<object>} messages - The array of messages for the chat completion, following the OpenAI format.
- * @returns {Promise<string>} The generated content from the LLM.
+ * @param {Array<object>} messages - The array of messages for the chat completion.
+ * @returns {Promise<object>} An object containing the generated content and the full prompt.
  * @throws {Error} If the API request fails or the environment variable is not set.
  */
 export async function generateCompletion(model, messages, systemPrompt) {
@@ -60,26 +60,22 @@ export async function generateCompletion(model, messages, systemPrompt) {
 
     // According to OpenAI spec, the response contains a `choices` array.
     if (data && data.choices && data.choices[0] && data.choices[0].message && typeof data.choices[0].message.content === 'string') {
-        return data.choices[0].message.content.trim();
+        return {
+            content: data.choices[0].message.content.trim(),
+            prompt: fullMessages
+        };
     } else {
-        throw new Error('Invalid response format from OpenWebUI API.');
+        throw new Error('Invalid or unexpected response format from OpenWebUI API.');
     }
 
   } catch (error) {
     console.error(`Error calling OpenWebUI API: ${error.message}`);
-    // Re-throw the error to be handled by the caller
     throw error;
   }
 }
 
-/**
- * Generates a series of Bluesky posts for an academic article.
- * @param {string} model - The model to use.
- * @param {string} articleContext - The full text or summary of the academic article.
- * @returns {Promise<string>} The generated Bluesky posts.
- */
-export async function generateBlueskyPosts(model, articleContext) {
-  const systemPrompt = `
+export const SYSTEM_PROMPTS = {
+  bluesky: `
     You are an expert academic social media manager. Your task is to generate a series of five (5) engaging posts for the social media platform Bluesky. I will provide the full context of a new academic article below.
 
     Your primary goal is to write a series of posts that would encourage other academics to read the full article.
@@ -100,23 +96,11 @@ export async function generateBlueskyPosts(model, articleContext) {
         * **Broad examples:** '#AcademicSky', '#NewResearch', '#Science', '#Academia', '#Research'
         * **Field-specific examples:** '#CognitiveScience', '#LiteraryStudies', '#ClimateChange', '#EconomicHistory' (You will determine the best ones from the article).
     5.  **Call to Action:** The final post in the series should include a clear and compelling call to action, encouraging users to read the full paper. Use a placeholder like [LINK TO ARTICLE] for the URL.
-  `;
-  const messages = [{ role: 'user', content: articleContext }];
-  console.error(`Sending prompt to model "${model}" via OpenWebUI to generate Bluesky posts...`);
-
-  return generateCompletion(model, messages, systemPrompt);
-}
-
-/**
- * Generates a LinkedIn post for an academic article.
- * @param {string} model - The model to use.
- * @param {string} articleContext - The full text or summary of the academic article.
- * @returns {Promise<string>} The generated LinkedIn post.
- */
-export async function generateLinkedInPost(model, articleContext) {
-  const systemPrompt = `
+    6.  Start with the title of the blog post without any preamble like Ok or here you go.
+    `,
+  linkedin: `
     You are a strategic communications expert specializing in bridging the gap between academia and industry. Your task is to write a single, compelling LinkedIn post to promote a new academic article. I will provide the full context of the article below.
-
+    
     The goal is to generate interest and demonstrate the value of this research to a professional, non-academic audience.
 
     Audience: The target audience consists of professionals in industry, government, and the third sector (non-profits, charities). They are not academics and will be most interested in the practical applications, real-world relevance, and potential impact of the research.
@@ -150,11 +134,76 @@ export async function generateLinkedInPost(model, articleContext) {
     Use Relevant Hashtags: Include 4-6 relevant hashtags to increase visibility. Focus on professional and industry-specific tags rather than purely academic ones.
 
     Examples: #Innovation, #DataScience, #UrbanPlanning, #Policy, #TechForGood, #FutureOfWork, #UCLCASA, #[YourSpecificIndustry]
-  `;
+  `,
+  blog: `
+    You are an expert science communicator and content writer. Your task is to write a detailed and engaging blog post based on the academic work I provide below.
 
+    The goal is to make the research accessible to a broad, intelligent audience that may not have specialist knowledge in the field. The tone should be informative, engaging, and professional.
+
+    **Audience:** A general but educated audience (e.g., readers of publications like Scientific American, New Scientist, or well-regarded tech/science blogs). They are curious about research but need complex ideas explained clearly.
+
+    **Instructions:**
+
+    1.  **Structure the Blog Post:** The output must be well-structured and ready to publish. Include the following sections:
+        *   **Catchy Title:** A compelling title that grabs the reader's attention.
+        *   **Introduction:** A short introduction (2-3 sentences) that sets the scene, introduces the core problem or question, and hooks the reader.
+        *   **Main Body:** This should be the longest section. Break down the key findings, methods, or significance of the work into 3-4 main points. Use subheadings for each point to improve readability. Explain complex terms simply. Use analogies or real-world examples where possible.
+        *   **Broader Impact/Conclusion:** Conclude by summarizing the importance of the work. What are the bigger implications? What does this mean for the future of the field, or for society?
+        *   **Call to Action:** End with a call to action, inviting readers to learn more by reading the original paper. Use a placeholder like [LINK TO ARTICLE/GRANT].
+
+    2.  **Clarity and Accessibility:** Avoid jargon. If a technical term is essential, explain it immediately in simple terms. The post should tell a story about the research—the "why," the "how," and the "so what."
+
+    3.  **Highlight Collaboration (if applicable):** If the context mentions collaboration (e.g., with UCL CASA), weave this into the narrative to highlight the strength of a team-based, interdisciplinary approach.
+
+    4.  **Formatting:** Use Markdown for formatting. Use headings (\`##\`), subheadings (\`###\`), bold text (\`**text**\`), and bullet points (\`* item\`) to make the post easy to scan.
+
+    5.  **Word Count:** Aim for a word count between 600-800 words.
+
+    6.  Start with the title of the blog post without any preamble like Ok or here you go.
+  `
+};
+
+/**
+ * Generates a series of Bluesky posts for an academic article.
+ * @param {string} model - The model to use.
+ * @param {string} articleContext - The full text or summary of the academic article.
+ * @returns {Promise<string>} The generated Bluesky posts.
+ */
+export async function generateBlueskyPosts(model, articleContext) {
+  const systemPrompt = SYSTEM_PROMPTS.bluesky;
+  const messages = [{ role: 'user', content: articleContext }];
+  console.log(`Sending prompt to model "${model}" via OpenWebUI to generate Bluesky posts...`);
+
+  return generateCompletion(model, messages, systemPrompt);
+}
+
+/**
+ * Generates a LinkedIn post for an academic article.
+ * @param {string} model - The model to use.
+ * @param {string} articleContext - The full text or summary of the academic article.
+ * @returns {Promise<string>} The generated LinkedIn post.
+ */
+export async function generateLinkedInPost(model, articleContext) {
+  const systemPrompt = SYSTEM_PROMPTS.linkedin;
   const messages = [{ role: 'user', content: articleContext }];
   
-  console.error(`Sending prompt to model "${model}" via OpenWebUI to generate Linked-In post...`);
+  console.log(`Sending prompt to model "${model}" via OpenWebUI to generate Linked-In post...`);
+
+  return generateCompletion(model, messages, systemPrompt);
+}
+
+/**
+ * Generates a blog post for an academic article or grant.
+ * @param {string} model - The model to use.
+ * @param {string} itemContext - The full context of the academic item (publication or grant).
+ * @returns {Promise<string>} The generated blog post.
+ */
+export async function generateBlogPost(model, itemContext) {
+  const systemPrompt = SYSTEM_PROMPTS.blog;
+
+  const messages = [{ role: 'user', content: itemContext }];
+
+  console.log(`Sending prompt to model "${model}" via OpenWebUI to generate a blog post...`);
 
   return generateCompletion(model, messages, systemPrompt);
 }

@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   // Get all DOM elements
   // Note: form and userIdInput may be null on profile.html
   const mainElement = document.querySelector('main');
@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const summaryContainer = document.getElementById('summary-container');
   const publicationsContainer = document.getElementById('publications-container');
   const grantsContainer = document.getElementById('grants-container');
+  const teachingContainer = document.getElementById('teaching-container');
   const resultsContainer = document.getElementById('results-container');
   const resultsHeader = document.getElementById('results-header');
   const resultsBody = document.getElementById('results-body');
@@ -18,9 +19,56 @@ document.addEventListener('DOMContentLoaded', () => {
   // Store the full data to be accessed by button clicks
   let allPublications = [];
   let allGrants = [];
+  let allTeaching = [];
+  let systemPrompts = {};
+
+  // Fetch system prompts on page load to be used by the "Open in Playground" button
+  try {
+    const response = await fetch('/api/prompts');
+    if (response.ok) {
+      systemPrompts = await response.json();
+    } else {
+      console.error('Failed to fetch system prompts.');
+    }
+  } catch (error) {
+    console.error('Could not fetch system prompts:', error);
+  }
 
   // Get the max records value from the data attribute, with a fallback
   const MAX_RECORDS_TO_SHOW = mainElement ? parseInt(mainElement.dataset.maxRecords, 10) : 5;
+
+  // Helper to get hostname from a URL, with a fallback.
+  const getHostname = (url) => {
+    try {
+      const hostname = new URL(url).hostname;
+      // Make it a bit cleaner, remove 'www.'
+      return hostname.startsWith('www.') ? hostname.substring(4) : hostname;
+    } catch (e) {
+      return 'Link'; // Fallback for invalid URLs
+    }
+  };
+
+  // Helper to get an ordinal suffix for a day number
+  const getOrdinalSuffix = (day) => {
+    if (day > 3 && day < 21) return 'th';
+    switch (day % 10) {
+      case 1: return 'st';
+      case 2: return 'nd';
+      case 3: return 'rd';
+      default: return 'th';
+    }
+  };
+
+  // Helper to format a date with an ordinal suffix
+  const formatDateWithOrdinal = (dateObj) => {
+    if (!dateObj || !dateObj.year) return 'N/A';
+    const date = new Date(dateObj.dateTime);
+    const day = date.getDate();
+    const month = date.toLocaleString('en-GB', { month: 'long' });
+    const year = date.getFullYear();
+    return `${day}${getOrdinalSuffix(day)} ${month} ${year}`;
+  };
+
   // Toggle visibility of the results body
   if (resultsHeader) {
     resultsHeader.addEventListener('click', () => {
@@ -32,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (expandAllBtn) {
     expandAllBtn.addEventListener('click', (e) => {
       e.preventDefault();
-      [summaryContainer, publicationsContainer, grantsContainer, resultsContainer].forEach(container => {
+      [summaryContainer, publicationsContainer, grantsContainer, teachingContainer, resultsContainer].forEach(container => {
         // Only toggle if the container is actually visible on the page
         if (container && !container.classList.contains('d-none')) {
           container.classList.remove('collapsed');
@@ -44,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (collapseAllBtn) {
     collapseAllBtn.addEventListener('click', (e) => {
       e.preventDefault();
-      [summaryContainer, publicationsContainer, grantsContainer, resultsContainer].forEach(container => {
+      [summaryContainer, publicationsContainer, grantsContainer, teachingContainer, resultsContainer].forEach(container => {
         // Only toggle if the container is actually visible on the page
         if (container && !container.classList.contains('d-none')) {
           container.classList.add('collapsed');
@@ -53,13 +101,30 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Toggle visibility of the summary body
+  // Toggle visibility of the summary body and handle stat links
   if (summaryContainer) {
     summaryContainer.addEventListener('click', (e) => {
-      // Use event delegation since the header is dynamically created
+      // Use event delegation since elements are dynamically created
+
+      // Handle collapsible header
       const header = e.target.closest('.summary-card-header');
       if (header) {
         summaryContainer.classList.toggle('collapsed');
+        return; // Prevent other handlers from firing
+      }
+
+      // Handle stat links to scroll to sections
+      const statLink = e.target.closest('.summary-stat-link');
+      if (statLink) {
+        e.preventDefault();
+        const targetId = statLink.dataset.targetId;
+        const targetContainer = document.getElementById(targetId);
+        if (targetContainer) {
+          // Expand the container if it's collapsed
+          targetContainer.classList.remove('collapsed');
+          // Scroll to the container
+          targetContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
       }
     });
   }
@@ -88,6 +153,57 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
+      // Handle copy prompt button
+      const copyBtn = e.target.closest('.copy-prompt-btn');
+      if (copyBtn) {
+        const pubIndex = copyBtn.dataset.pubIndex;
+        const promptContent = document.querySelector(`#ai-output-container-${pubIndex} .ai-prompt-content`);
+        if (promptContent && navigator.clipboard) {
+          navigator.clipboard.writeText(promptContent.textContent).then(() => {
+            const originalHTML = copyBtn.innerHTML;
+            copyBtn.innerHTML = `<i class="bi bi-check-lg"></i> Copied!`;
+            copyBtn.classList.replace('btn-light', 'btn-success');
+            setTimeout(() => {
+              copyBtn.innerHTML = originalHTML;
+              copyBtn.classList.replace('btn-success', 'btn-light');
+            }, 2000);
+          }).catch(err => {
+            console.error('Failed to copy prompt:', err);
+          });
+        }
+        return;
+      }
+
+      // Handle open in playground button
+      const openPlaygroundBtn = e.target.closest('.open-in-playground-btn');
+      if (openPlaygroundBtn) {
+        const pubIndex = openPlaygroundBtn.dataset.pubIndex;
+        const publication = allPublications[pubIndex];
+        if (publication) {
+          const promptData = JSON.stringify(publication, null, 2);
+          sessionStorage.setItem('playgroundPrompt', promptData);
+          window.open('/playground', '_blank');
+        } else {
+          console.error('Could not find publication data for index:', pubIndex);
+          alert('Could not retrieve the data for this publication.');
+        }
+        return;
+      }
+
+      // Handle show prompt link
+      const showPromptLink = e.target.closest('.show-prompt-link');
+      if (showPromptLink) {
+        e.preventDefault();
+        const pubIndex = showPromptLink.dataset.pubIndex;
+        const promptWrapper = document.querySelector(`#ai-output-container-${pubIndex} .ai-prompt-wrapper`);
+        if (promptWrapper) {
+          const isVisible = promptWrapper.style.display !== 'none';
+          promptWrapper.style.display = isVisible ? 'none' : 'block';
+          showPromptLink.textContent = isVisible ? 'Show Prompt Data' : 'Hide Prompt Data';
+        }
+        return;
+      }
+
       // Handle close button
       const closeBtn = e.target.closest('.close-ai-output-btn');
       if (closeBtn) {
@@ -97,6 +213,15 @@ document.addEventListener('DOMContentLoaded', () => {
           outputContainer.style.display = 'none';
           const contentDiv = outputContainer.querySelector('.ai-output-content');
           if (contentDiv) contentDiv.innerHTML = '';
+          // Reset prompt view
+          const promptWrapper = outputContainer.querySelector('.ai-prompt-wrapper');
+          if (promptWrapper) {
+            promptWrapper.style.display = 'none';
+            const promptContent = promptWrapper.querySelector('.ai-prompt-content');
+            if (promptContent) promptContent.textContent = '';
+          }
+          const promptLink = outputContainer.querySelector('.show-prompt-link');
+          if (promptLink) promptLink.textContent = 'Show Prompt Data';
         }
       }
     });
@@ -126,6 +251,57 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
+      // Handle open in playground button
+      const openPlaygroundBtn = e.target.closest('.open-in-playground-btn');
+      if (openPlaygroundBtn) {
+        const grantIndex = openPlaygroundBtn.dataset.grantIndex;
+        const grant = allGrants[grantIndex];
+        if (grant) {
+          const promptData = JSON.stringify(grant, null, 2);
+          sessionStorage.setItem('playgroundPrompt', promptData);
+          window.open('/playground', '_blank');
+        } else {
+          console.error('Could not find grant data for index:', grantIndex);
+          alert('Could not retrieve the data for this grant.');
+        }
+        return;
+      }
+
+      // Handle copy prompt button
+      const copyBtn = e.target.closest('.copy-prompt-btn');
+      if (copyBtn) {
+        const grantIndex = copyBtn.dataset.grantIndex;
+        const promptContent = document.querySelector(`#ai-output-container-grant-${grantIndex} .ai-prompt-content`);
+        if (promptContent && navigator.clipboard) {
+          navigator.clipboard.writeText(promptContent.textContent).then(() => {
+            const originalHTML = copyBtn.innerHTML;
+            copyBtn.innerHTML = `<i class="bi bi-check-lg"></i> Copied!`;
+            copyBtn.classList.replace('btn-light', 'btn-success');
+            setTimeout(() => {
+              copyBtn.innerHTML = originalHTML;
+              copyBtn.classList.replace('btn-success', 'btn-light');
+            }, 2000);
+          }).catch(err => {
+            console.error('Failed to copy prompt:', err);
+          });
+        }
+        return;
+      }
+
+      // Handle show prompt link
+      const showPromptLink = e.target.closest('.show-prompt-link');
+      if (showPromptLink) {
+        e.preventDefault();
+        const grantIndex = showPromptLink.dataset.grantIndex;
+        const promptWrapper = document.querySelector(`#ai-output-container-grant-${grantIndex} .ai-prompt-wrapper`);
+        if (promptWrapper) {
+          const isVisible = promptWrapper.style.display !== 'none';
+          promptWrapper.style.display = isVisible ? 'none' : 'block';
+          showPromptLink.textContent = isVisible ? 'Show Prompt Data' : 'Hide Prompt Data';
+        }
+        return;
+      }
+
       // Handle close button
       const closeBtn = e.target.closest('.close-ai-output-btn');
       if (closeBtn) {
@@ -135,6 +311,112 @@ document.addEventListener('DOMContentLoaded', () => {
           outputContainer.style.display = 'none';
           const contentDiv = outputContainer.querySelector('.ai-output-content');
           if (contentDiv) contentDiv.innerHTML = '';
+          // Reset prompt view
+          const promptWrapper = outputContainer.querySelector('.ai-prompt-wrapper');
+          if (promptWrapper) {
+            promptWrapper.style.display = 'none';
+            const promptContent = promptWrapper.querySelector('.ai-prompt-content');
+            if (promptContent) promptContent.textContent = '';
+          }
+          const promptLink = outputContainer.querySelector('.show-prompt-link');
+          if (promptLink) promptLink.textContent = 'Show Prompt Data';
+        }
+      }
+    });
+  }
+
+  // Handle teaching container interactions (collapse and buttons)
+  if (teachingContainer) {
+    teachingContainer.addEventListener('click', (e) => {
+      // Handle collapsible header
+      const header = e.target.closest('.teaching-card-header');
+      if (header) {
+        teachingContainer.classList.toggle('collapsed');
+        return;
+      }
+
+      // Handle AI post generation
+      const generateBtn = e.target.closest('.generate-post-btn');
+      if (generateBtn) {
+        const teachingIndex = generateBtn.dataset.teachingIndex;
+        const type = generateBtn.dataset.type;
+        const activity = allTeaching[teachingIndex];
+        const outputContainer = document.getElementById(`ai-output-container-teaching-${teachingIndex}`);
+        const outputDiv = outputContainer.querySelector('.ai-output-content');
+        const buttons = generateBtn.closest('.d-grid').querySelectorAll('button');
+        generatePost(activity, type, outputDiv, buttons);
+        return;
+      }
+
+      // Handle open in playground button
+      const openPlaygroundBtn = e.target.closest('.open-in-playground-btn');
+      if (openPlaygroundBtn) {
+        const teachingIndex = openPlaygroundBtn.dataset.teachingIndex;
+        const activity = allTeaching[teachingIndex];
+        if (activity) {
+          const promptData = JSON.stringify(activity, null, 2);
+          sessionStorage.setItem('playgroundPrompt', promptData);
+          window.open('/playground', '_blank');
+        } else {
+          console.error('Could not find teaching data for index:', teachingIndex);
+          alert('Could not retrieve the data for this teaching activity.');
+        }
+        return;
+      }
+
+      // Handle copy prompt button
+      const copyBtn = e.target.closest('.copy-prompt-btn');
+      if (copyBtn) {
+        const teachingIndex = copyBtn.dataset.teachingIndex;
+        const promptContent = document.querySelector(`#ai-output-container-teaching-${teachingIndex} .ai-prompt-content`);
+        if (promptContent && navigator.clipboard) {
+          navigator.clipboard.writeText(promptContent.textContent).then(() => {
+            const originalHTML = copyBtn.innerHTML;
+            copyBtn.innerHTML = `<i class="bi bi-check-lg"></i> Copied!`;
+            copyBtn.classList.replace('btn-light', 'btn-success');
+            setTimeout(() => {
+              copyBtn.innerHTML = originalHTML;
+              copyBtn.classList.replace('btn-success', 'btn-light');
+            }, 2000);
+          }).catch(err => {
+            console.error('Failed to copy prompt:', err);
+          });
+        }
+        return;
+      }
+
+      // Handle show prompt link
+      const showPromptLink = e.target.closest('.show-prompt-link');
+      if (showPromptLink) {
+        e.preventDefault();
+        const teachingIndex = showPromptLink.dataset.teachingIndex;
+        const promptWrapper = document.querySelector(`#ai-output-container-teaching-${teachingIndex} .ai-prompt-wrapper`);
+        if (promptWrapper) {
+          const isVisible = promptWrapper.style.display !== 'none';
+          promptWrapper.style.display = isVisible ? 'none' : 'block';
+          showPromptLink.textContent = isVisible ? 'Show Prompt Data' : 'Hide Prompt Data';
+        }
+        return;
+      }
+
+      // Handle close button
+      const closeBtn = e.target.closest('.close-ai-output-btn');
+      if (closeBtn) {
+        const teachingIndex = closeBtn.dataset.teachingIndex;
+        const outputContainer = document.getElementById(`ai-output-container-teaching-${teachingIndex}`);
+        if (outputContainer) {
+          outputContainer.style.display = 'none';
+          const contentDiv = outputContainer.querySelector('.ai-output-content');
+          if (contentDiv) contentDiv.innerHTML = '';
+          // Reset prompt view
+          const promptWrapper = outputContainer.querySelector('.ai-prompt-wrapper');
+          if (promptWrapper) {
+            promptWrapper.style.display = 'none';
+            const promptContent = promptWrapper.querySelector('.ai-prompt-content');
+            if (promptContent) promptContent.textContent = '';
+          }
+          const promptLink = outputContainer.querySelector('.show-prompt-link');
+          if (promptLink) promptLink.textContent = 'Show Prompt Data';
         }
       }
     });
@@ -181,21 +463,21 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="col-md-4">
               <h6 class="card-title">Statistics</h6>
               <ul class="list-group">
-                <li class="list-group-item d-flex justify-content-between align-items-center">
+                <li class="list-group-item d-flex justify-content-between align-items-center summary-stat-link" data-target-id="publications-container">
                   Publications
                   <span class="badge bg-primary rounded-pill">${publications.length}</span>
                 </li>
-                <li class="list-group-item d-flex justify-content-between align-items-center">
+                <li class="list-group-item d-flex justify-content-between align-items-center summary-stat-link" data-target-id="grants-container">
+                  Grants
+                  <span class="badge bg-primary rounded-pill">${grants.length}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center summary-stat-link" data-target-id="teaching-container">
                   Teaching Activities
                   <span class="badge bg-primary rounded-pill">${teaching.length}</span>
                 </li>
                 <li class="list-group-item d-flex justify-content-between align-items-center">
                   Research Interests
                   <span class="badge bg-primary rounded-pill">${profile.research_interests?.length || 0}</span>
-                </li>
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                  Grants
-                  <span class="badge bg-primary rounded-pill">${grants.length}</span>
                 </li>
               </ul>
             </div>
@@ -222,8 +504,60 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const publicationCards = recentPublications.map((pub, index) => {
       const authors = pub.authors.map(a => a.nameShortFormat).join(', ');
-      const pubDate = pub.publicationDate?.year ? new Date(pub.publicationDate.dateTime).toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A';
-      const pubLink = pub.doi ? `https://doi.org/${pub.doi}` : pub.publicUrl;
+      const pubDate = formatDateWithOrdinal(pub.publicationDate);
+
+      // Create a mutable copy of the URLs to work with.
+      let publicUrls = [...(pub.publicUrls || [])];
+
+      // Find the first PDF link and extract it from the array.
+      const pdfLinkIndex = publicUrls.findIndex(link => link.toLowerCase().endsWith('.pdf'));
+      let pdfLink = null;
+      if (pdfLinkIndex > -1) {
+        pdfLink = publicUrls.splice(pdfLinkIndex, 1)[0];
+      }
+
+      // The primary link for the title is the first one available.
+      const primaryLink = publicUrls.shift() || null;
+
+      // Build a list of all other links to display as badges.
+      const otherLinksToDisplay = [];
+
+      // Add the repository PDF link first if it exists.
+      if (pub.repositoryPdfUrl) {
+        // Ensure it's not the same as the primary link or the main PDF button link.
+        if (pub.repositoryPdfUrl !== primaryLink && pub.repositoryPdfUrl !== pdfLink) {
+          otherLinksToDisplay.push({
+            url: pub.repositoryPdfUrl,
+            label: 'Repository PDF'
+          });
+        }
+      }
+
+      // Add all other remaining URLs from the main list.
+      publicUrls.forEach(url => {
+        // Ensure we don't add duplicates of links already handled.
+        if (url !== primaryLink && url !== pdfLink && url !== pub.repositoryPdfUrl) {
+          otherLinksToDisplay.push({
+            url: url,
+            label: getHostname(url)
+          });
+        }
+      });
+
+      const otherLinksHtml = otherLinksToDisplay.map(link => {
+        return `
+        <a href="${link.url}" target="_blank" rel="noopener noreferrer" class="badge rounded-pill bg-light text-dark text-decoration-none fw-normal ms-1" title="${link.url}">
+          ${link.label} <i class="bi bi-box-arrow-up-right small"></i>
+        </a>
+      `;
+      }).join('');
+
+      // If a PDF link was found, create a dedicated button for it.
+      const pdfButtonHtml = pdfLink ? `
+                <a href="${pdfLink}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-danger">
+                  <i class="bi bi-file-earmark-pdf"></i> View PDF
+                </a>
+      ` : '';
 
       return `
       <div class="card mb-3">
@@ -231,7 +565,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="row">
             <div class="col-md-8 col-lg-9">
               <h6 class="card-title">
-                ${pubLink ? `<a href="${pubLink}" target="_blank" rel="noopener noreferrer">${pub.title}</a>` : pub.title}
+                ${primaryLink ? `<a href="${primaryLink}" target="_blank" rel="noopener noreferrer">${pub.title}</a>` : pub.title}
               </h6>
               <p class="card-text text-muted mb-1 small">
                 <strong>Authors:</strong> ${authors}
@@ -239,21 +573,41 @@ document.addEventListener('DOMContentLoaded', () => {
               <p class="card-text text-muted mb-0 small">
                 <strong>${pub.journal || pub.parentTitle || 'N/A'}</strong> | <strong>Date:</strong> ${pubDate}
               </p>
+              ${otherLinksToDisplay.length > 0 ? `<p class="card-text text-muted mb-0 small mt-1"><strong>Links:</strong>${otherLinksHtml}</p>` : ''}
             </div>
             <div class="col-md-4 col-lg-3 mt-2 mt-md-0">
               <div class="d-grid gap-2">
+                ${pdfButtonHtml}
                 <button class="btn btn-sm btn-outline-primary generate-post-btn" data-type="linkedin" data-pub-index="${index}">
                   <i class="bi bi-linkedin"></i> Create LinkedIn Post
                 </button>
                 <button class="btn btn-sm btn-outline-info generate-post-btn" data-type="bluesky" data-pub-index="${index}">
                   <i class="bi bi-cloud"></i> Create Bluesky Posts
                 </button>
+                <button class="btn btn-sm btn-outline-secondary generate-post-btn" data-type="blog" data-pub-index="${index}">
+                  <i class="bi bi-file-post"></i> Create Blog Post
+                </button>
               </div>
             </div>
           </div>
           <div class="ai-output-container mt-3" id="ai-output-container-${index}" style="display: none;">
             <div class="ai-output-content card-body bg-light border rounded" style="min-height: 200px;"></div>
-            <button class="btn btn-sm btn-secondary mt-2 close-ai-output-btn" data-pub-index="${index}">Close & Clear</button>
+            <div class="d-flex justify-content-between align-items-center mt-2">
+              <button class="btn btn-sm btn-secondary close-ai-output-btn" data-pub-index="${index}">Close & Clear</button>
+              <a href="#" class="small text-muted show-prompt-link" data-pub-index="${index}">Show Prompt Data</a>
+            </div>
+            <div class="ai-prompt-wrapper mt-2" style="display: none;">
+              <div class="position-relative">
+                <div class="ai-prompt-content p-3 bg-dark text-light rounded" style="font-family: monospace; font-size: 0.8rem; white-space: pre-wrap; max-height: 300px; overflow-y: auto;">
+                </div>
+                <div class="position-absolute d-flex" style="top: 0.5rem; right: 2.0rem; z-index: 10;">
+                  <button class="btn btn-sm btn-light copy-prompt-btn" data-pub-index="${index}" title="Copy user data prompt to clipboard"><i class="bi bi-clipboard"></i> </button>
+                  <button class="btn btn-sm btn-light open-in-playground-btn ms-2" data-pub-index="${index}" title="Open Prompt Data in Playground">
+                    <i class="bi bi-journal-code"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -289,7 +643,16 @@ document.addEventListener('DOMContentLoaded', () => {
       const funder = grant.fundingBody || 'Funder Not Available';
       const startDate = grant.startDate?.year ? new Date(grant.startDate.dateTime).toLocaleDateString('en-GB', { year: 'numeric', month: 'short' }) : 'N/A';
       const endDate = grant.endDate?.year ? new Date(grant.endDate.dateTime).toLocaleDateString('en-GB', { year: 'numeric', month: 'short' }) : 'N/A';
-      const grantLink = grant.publicUrl;
+
+      const publicUrls = [...(grant.publicUrls || [])];
+      const grantLink = publicUrls.shift() || null;
+      const otherLinks = publicUrls;
+
+      const otherLinksHtml = otherLinks.map(link => `
+        <a href="${link}" target="_blank" rel="noopener noreferrer" class="badge rounded-pill bg-light text-dark text-decoration-none fw-normal ms-1" title="${link}">
+          ${getHostname(link)} <i class="bi bi-box-arrow-up-right small"></i>
+        </a>
+      `).join('');
 
       return `
       <div class="card mb-3">
@@ -305,6 +668,7 @@ document.addEventListener('DOMContentLoaded', () => {
               <p class="card-text text-muted mb-0 small">
                 <strong>Dates:</strong> ${startDate} - ${endDate}
               </p>
+              ${otherLinks.length > 0 ? `<p class="card-text text-muted mb-0 small mt-1"><strong>Links:</strong>${otherLinksHtml}</p>` : ''}
             </div>
             <div class="col-md-4 col-lg-3 mt-2 mt-md-0">
               <div class="d-grid gap-2">
@@ -314,12 +678,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 <button class="btn btn-sm btn-outline-info generate-post-btn" data-type="bluesky" data-grant-index="${index}">
                   <i class="bi bi-cloud"></i> Create Bluesky Posts
                 </button>
+                <button class="btn btn-sm btn-outline-secondary generate-post-btn" data-type="blog" data-grant-index="${index}">
+                  <i class="bi bi-file-post"></i> Create Blog Post
+                </button>
               </div>
             </div>
           </div>
           <div class="ai-output-container mt-3" id="ai-output-container-grant-${index}" style="display: none;">
             <div class="ai-output-content card-body bg-light border rounded" style="min-height: 200px;"></div>
-            <button class="btn btn-sm btn-secondary mt-2 close-ai-output-btn" data-grant-index="${index}">Close & Clear</button>
+            <div class="d-flex justify-content-between align-items-center mt-2">
+              <button class="btn btn-sm btn-secondary close-ai-output-btn" data-grant-index="${index}">Close & Clear</button>
+              <a href="#" class="small text-muted show-prompt-link" data-grant-index="${index}">Show Prompt Data</a>
+            </div>
+            <div class="ai-prompt-wrapper mt-2" style="display: none;">
+              <div class="position-relative">
+                <div class="ai-prompt-content p-3 bg-dark text-light rounded" style="font-family: monospace; font-size: 0.8rem; white-space: pre-wrap; max-height: 300px; overflow-y: auto;">
+                </div>
+                <div class="position-absolute d-flex" style="top: 0.5rem; right: 0.5rem; z-index: 10;">
+                  <button class="btn btn-sm btn-light copy-prompt-btn" data-grant-index="${index}" title="Copy user data prompt to clipboard"><i class="bi bi-clipboard"></i> </button>
+                  <button class="btn btn-sm btn-light open-in-playground-btn ms-2" data-grant-index="${index}" title="Open Prompt Data in Playground">
+                    <i class="bi bi-journal-code"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -342,6 +724,93 @@ document.addEventListener('DOMContentLoaded', () => {
     grantsContainer.classList.remove('d-none', 'collapsed');
   }
 
+  function displayTeaching(teaching) {
+    if (!teaching || teaching.length === 0) {
+      teachingContainer.classList.add('d-none');
+      return;
+    }
+
+    const recentTeaching = teaching.slice(0, MAX_RECORDS_TO_SHOW);
+
+    const teachingCards = recentTeaching.map((activity, index) => {
+      const title = activity.title || 'No Title Available';
+      const role = activity.objectTypeDisplayName || 'N/A';
+      const dateString = formatDateWithOrdinal(activity.date1);
+      const additionalInfo = activity.additionalInformation;
+      const keyUrl = activity.keyUrl;
+
+      const additionalInfoHtml = additionalInfo ? `
+              <p class="card-text text-muted mt-1 small">${additionalInfo}</p>
+      ` : '';
+
+      return `
+      <div class="card mb-3">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-8 col-lg-9">
+              <h6 class="card-title">${keyUrl ? `<a href="${keyUrl}" target="_blank" rel="noopener noreferrer">${title}</a>` : title}</h6>
+              <p class="card-text text-muted mb-1 small">
+                <strong>Role:</strong> ${role}
+              </p>
+              <p class="card-text text-muted mb-0 small">
+                <strong>Date:</strong> ${dateString}
+              </p>
+              ${additionalInfoHtml}
+            </div>
+            <div class="col-md-4 col-lg-3 mt-2 mt-md-0">
+              <div class="d-grid gap-2">
+                <button class="btn btn-sm btn-outline-primary generate-post-btn" data-type="linkedin" data-teaching-index="${index}">
+                  <i class="bi bi-linkedin"></i> Create LinkedIn Post
+                </button>
+                <button class="btn btn-sm btn-outline-info generate-post-btn" data-type="bluesky" data-teaching-index="${index}">
+                  <i class="bi bi-cloud"></i> Create Bluesky Posts
+                </button>
+                <button class="btn btn-sm btn-outline-secondary generate-post-btn" data-type="blog" data-teaching-index="${index}">
+                  <i class="bi bi-file-post"></i> Create Blog Post
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="ai-output-container mt-3" id="ai-output-container-teaching-${index}" style="display: none;">
+            <div class="ai-output-content card-body bg-light border rounded" style="min-height: 200px;"></div>
+            <div class="d-flex justify-content-between align-items-center mt-2">
+              <button class="btn btn-sm btn-secondary close-ai-output-btn" data-teaching-index="${index}">Close & Clear</button>
+              <a href="#" class="small text-muted show-prompt-link" data-teaching-index="${index}">Show Prompt Data</a>
+            </div>
+            <div class="ai-prompt-wrapper mt-2" style="display: none;">
+              <div class="position-relative">
+                <div class="ai-prompt-content p-3 bg-dark text-light rounded" style="font-family: monospace; font-size: 0.8rem; white-space: pre-wrap; max-height: 300px; overflow-y: auto;">
+                </div>
+                <div class="position-absolute d-flex" style="top: 0.5rem; right: 0.5rem; z-index: 10;">
+                  <button class="btn btn-sm btn-light copy-prompt-btn" data-teaching-index="${index}" title="Copy user data prompt to clipboard"><i class="bi bi-clipboard"></i> </button>
+                  <button class="btn btn-sm btn-light open-in-playground-btn ms-2" data-teaching-index="${index}" title="Open Prompt Data in Playground">
+                    <i class="bi bi-journal-code"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      `;
+    }).join('');
+
+    const teachingHtml = `
+      <div class="card">
+        <div class="card-header teaching-card-header d-flex justify-content-between align-items-center" style="cursor: pointer;">
+          <h5 class="mb-0">Recent Teaching Activities (${recentTeaching.length})</h5>
+          <i class="bi bi-chevron-down" id="teaching-toggle-icon"></i>
+        </div>
+        <div class="card-body">
+          ${teachingCards}
+        </div>
+      </div>
+    `;
+
+    teachingContainer.innerHTML = teachingHtml;
+    teachingContainer.classList.remove('d-none', 'collapsed');
+  }
+
   function displayFullJson(data) {
     const resultsHeaderH5 = document.querySelector('#results-header h5');
     if (resultsHeaderH5 && data.profile && data.profile.name) {
@@ -360,15 +829,34 @@ document.addEventListener('DOMContentLoaded', () => {
    * @param {NodeListOf<HTMLButtonElement>} buttons - The buttons to disable during the request.
    */
   async function generatePost(itemData, type, outputElement, buttons) {
-    // Show the output container and set loading state
+    // Show the output container
     outputElement.parentElement.style.display = 'block';
+    // Store the prompt type on the container for other buttons to use
+    outputElement.parentElement.dataset.promptType = type;
+
+    const promptWrapper = outputElement.parentElement.querySelector('.ai-prompt-wrapper');
+    const promptContainer = promptWrapper ? promptWrapper.querySelector('.ai-prompt-content') : null;
+    const showPromptLink = outputElement.parentElement.querySelector('.show-prompt-link');
+    if (promptContainer && showPromptLink) {
+      try {
+        // The user data is the itemData object, formatted as a JSON string.
+        const userDataString = JSON.stringify(itemData, null, 2);
+        promptContainer.textContent = userDataString;
+        promptWrapper.style.display = 'none';
+      } catch (e) {
+        promptContainer.textContent = 'Error formatting prompt data.';
+        promptWrapper.style.display = 'block';
+      }
+    }
+
+    // Set loading state in the main output element
+    // Add flex classes to center the spinner. We'll remove them in the finally block.
+    outputElement.classList.add('d-flex', 'justify-content-center', 'align-items-center');
     outputElement.innerHTML = `
-      <div class="d-flex justify-content-center align-items-center h-100">
-        <div class="spinner-border text-primary" role="status">
-          <span class="visually-hidden">Loading...</span>
-        </div>
-        <span class="ms-2 text-muted">Generating content...</span>
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
       </div>
+      <span class="ms-2 text-muted">Generating content...</span>
     `;
 
     // Disable all buttons for this card and show a spinner on the clicked one
@@ -396,9 +884,13 @@ document.addEventListener('DOMContentLoaded', () => {
       // to prevent XSS attacks from the LLM's output.
       const dirtyHtml = marked.parse(result.content);
       outputElement.innerHTML = DOMPurify.sanitize(dirtyHtml);
+      // The prompt is now shown before the request is sent, so the block
+      // that previously populated it from the server response is no longer needed.
     } catch (error) {
       outputElement.innerHTML = `<div class="alert alert-danger m-0"><strong>Error:</strong> ${error.message}</div>`;
     } finally {
+      // Remove the centering classes so the final content displays normally
+      outputElement.classList.remove('d-flex', 'justify-content-center', 'align-items-center');
       buttons.forEach(btn => btn.disabled = false);
       clickedButton.innerHTML = originalButtonContent;
     }
@@ -427,6 +919,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // Success: display data
       allPublications = data.publications;
       allGrants = data.grants;
+      allTeaching = data.teaching;
 
       // Update the main page header and title with the person's name
       if (data.profile && data.profile.name) {
@@ -439,6 +932,7 @@ document.addEventListener('DOMContentLoaded', () => {
       displaySummary(data);
       displayPublications(allPublications);
       displayGrants(allGrants);
+      displayTeaching(allTeaching);
       displayFullJson(data);
       viewControls.classList.remove('d-none'); // Make controls visible
 
@@ -461,6 +955,7 @@ document.addEventListener('DOMContentLoaded', () => {
       summaryContainer.classList.add('d-none');
       publicationsContainer.classList.add('d-none');
       grantsContainer.classList.add('d-none');
+      teachingContainer.classList.add('d-none');
       resultsContainer.classList.add('d-none', 'collapsed');
       const resultsHeaderH5 = document.querySelector('#results-header h5');
       if (resultsHeaderH5) {
@@ -508,6 +1003,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const submitBtn = playgroundForm.querySelector('button[type="submit"]');
     const linkedinBtn = document.getElementById('linkedin-btn');
     const blueskyBtn = document.getElementById('bluesky-btn');
+    const blogBtn = document.getElementById('blog-btn');
+
+    // Check for a prompt passed from another page via sessionStorage
+    const storedPrompt = sessionStorage.getItem('playgroundPrompt');
+    if (storedPrompt) {
+      promptInput.value = storedPrompt;
+      // Clean up so it doesn't reappear on refresh
+      sessionStorage.removeItem('playgroundPrompt');
+    }
 
     const handlePlaygroundRequest = async (endpoint, button) => {
       const prompt = promptInput.value.trim();
@@ -518,7 +1022,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const originalButtonHTML = button.innerHTML;
       // Disable all buttons to prevent multiple requests
-      [submitBtn, linkedinBtn, blueskyBtn].forEach(btn => { if(btn) btn.disabled = true; });
+      [submitBtn, linkedinBtn, blueskyBtn, blogBtn].forEach(btn => { if(btn) btn.disabled = true; });
       button.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Sending...`;
       resultsContainer.classList.remove('d-none');
       resultsDiv.innerHTML = `
@@ -546,7 +1050,7 @@ document.addEventListener('DOMContentLoaded', () => {
         resultsDiv.innerHTML = `<div class="alert alert-danger m-0"><strong>Error:</strong> ${error.message}</div>`;
       } finally {
         // Re-enable all buttons
-        [submitBtn, linkedinBtn, blueskyBtn].forEach(btn => { if(btn) btn.disabled = false; });
+        [submitBtn, linkedinBtn, blueskyBtn, blogBtn].forEach(btn => { if(btn) btn.disabled = false; });
         button.innerHTML = originalButtonHTML;
       }
     };
@@ -562,6 +1066,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (blueskyBtn) {
       blueskyBtn.addEventListener('click', () => handlePlaygroundRequest('/api/generate/bluesky', blueskyBtn));
+    }
+
+    if (blogBtn) {
+      blogBtn.addEventListener('click', () => handlePlaygroundRequest('/api/generate/blog', blogBtn));
     }
   } else if (copyCodeBtn) {
     // We are on the oauth-callback page, handle success or error.

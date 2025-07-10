@@ -1,0 +1,34 @@
+<%- include('partials/header') , { title: 'About', page: 'about' } %>
+
+<main class="container mt-4 mb-5">
+  <div class="row">
+    <div class="col-lg-8 offset-lg-2">
+      <div class="card shadow-sm">
+        <div class="card-body p-4">
+          <h1 class="card-title mb-3">About Social AI</h1>
+          <p class="lead">A web application that fetches public data from UCL Profiles and uses a local Large Language Model (LLM) to generate social media content.</p>
+
+          <hr class="my-4">
+
+          <h2 class="h4 mt-4">What it does</h2>
+          <p>This application allows you to:</p>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item"><i class="bi bi-search me-2"></i><strong>Search for Profiles:</strong> Enter a UCL Profiles ID to fetch detailed information about a person.</li>
+            <li class="list-group-item"><i class="bi bi-bar-chart-line me-2"></i><strong>View Rich Data:</strong> See a summary, recent publications, and awarded grants for any profile.</li>
+            <li class="list-group-item"><i class="bi bi-robot me-2"></i><strong>Generate AI Content:</strong> For any publication or grant, automatically generate engaging posts for LinkedIn, Bluesky, or a blog.</li>
+            <li class="list-group-item"><i class="bi bi-people me-2"></i><strong>Browse Staff:</strong> View a list of staff from the UCL Centre for Advanced Spatial Analysis (CASA).</li>
+          </ul>
+
+          <h2 class="h4 mt-4">Tech Stack</h2>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item"><strong>Backend:</strong> Node.js with Express.js</li>
+            <li class="list-group-item"><strong>Frontend:</strong> EJS for templating, Bootstrap for styling.</li>
+            <li class="list-group-item"><strong>AI Integration:</strong> Connects to any OpenAI-compatible API endpoint, like Open WebUI with Ollama.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<%- include('partials/footer') %>

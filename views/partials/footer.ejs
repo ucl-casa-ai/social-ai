@@ -1,6 +1,10 @@
   <footer class="footer mt-auto py-3 bg-white border-top">
     <div class="container text-center">
       <span class="text-muted">Created by <a href="https://profiles.ucl.ac.uk/4441" target="_blank" rel="noopener noreferrer">Steven Gray</a> | <a href="https://connected-environments.org/" target="_blank" rel="noopener noreferrer">UCL CASA</a> | 2025</span>
+      <% if (locals.appVersion) { %>
+        <br>
+        <span class="text-muted small">Social AI v<%= locals.appVersion %></span>
+      <% } %>
     </div>
   </footer>
   <!-- Bootstrap JS Bundle -->

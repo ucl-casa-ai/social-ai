@@ -135,15 +135,26 @@ function transformOrcidFundingToUclGrants(orcidFundingArray) {
       };
     };
 
-    // Use the top-level URL if available, as it's often a more direct link to the grant details.
-    // Fall back to searching the external identifiers if the top-level URL is not present.
-    const grantUrl = funding.url?.value || funding['external-ids']?.['external-id']?.find(id => id['external-id-type'] === 'grant_number')?.['external-id-url']?.value || null;
+    // Collect all available URLs from the funding record.
+    const urls = [];
+    if (funding.url?.value) {
+      urls.push(funding.url.value);
+    }
+    const externalIds = funding['external-ids']?.['external-id'] || [];
+    externalIds.forEach(id => {
+      if (id['external-id-url']?.value) {
+        urls.push(id['external-id-url'].value);
+      }
+    });
+
+    // Use a Set to ensure all URLs are unique.
+    const uniqueUrls = [...new Set(urls)];
     return {
       title: funding.title?.title?.value || 'No Title Available',
       fundingBody: funding.organization?.name || 'Funder Not Available',
       startDate: constructDate(startDate),
       endDate: constructDate(endDate),
-      publicUrl: grantUrl,
+      publicUrls: uniqueUrls,
     };
   });
 }
@@ -233,7 +244,52 @@ function transformApiData(profileApiData, pubsApiData, teachingApiData, grantsAp
     },
   };
 
-  const grants = grantsApiData.resource || [];
+  const publications = (pubsApiData.resource || []).map(pub => {
+    const urls = [];
+
+    // The primary link is often the public one on the UCL profile system.
+    if (pub.publicUrl) {
+      urls.push(pub.publicUrl);
+    }
+
+    // Add the DOI link.
+    if (pub.doi) {
+      urls.push(`https://doi.org/${pub.doi}`);
+    }
+
+    // Add links from the 'files' array, which often contain PDFs.
+    if (Array.isArray(pub.files)) {
+      pub.files.forEach(file => {
+        if (file.url) {
+          urls.push(file.url);
+        }
+      });
+    }
+
+    // Add any other links provided in the 'links' array.
+    if (Array.isArray(pub.links)) {
+      pub.links.forEach(link => {
+        if (link.url) {
+          urls.push(link.url);
+        }
+      });
+    }
+
+    pub.publicUrls = [...new Set(urls)];
+    return pub;
+  });
+
+  const grants = (grantsApiData.resource || []).map(grant => {
+    // Normalize grant object to always have a publicUrls array for consistent handling on the frontend.
+    if (grant.publicUrl && !grant.publicUrls) {
+      // If from UCL API, it will have publicUrl. Convert to publicUrls.
+      grant.publicUrls = [grant.publicUrl];
+    } else if (!grant.publicUrls) {
+      // Ensure the property exists even if empty.
+      grant.publicUrls = [];
+    }
+    return grant;
+  });
 
   // Sort grants by end date in descending order.
   // Grants without an end date are sorted to the end.
@@ -248,12 +304,11 @@ function transformApiData(profileApiData, pubsApiData, teachingApiData, grantsAp
     return dateB - dateA; // For descending order
   });
 
-  const publications = pubsApiData.resource || [];
   const teaching = teachingApiData.resource || [];
 
   return {
     profile,
-    publications,
+    publications, // This is now the transformed array with publicUrls
     grants,
     teaching,
   };

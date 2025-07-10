@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url';
 import { promises as fs } from 'fs';
 import { getProfile } from './ucl-api.js';
 import { getOrcidProfileWithToken } from './orcid-client.js';
-import { generateBlueskyPosts, generateLinkedInPost, generateCompletion } from './open-webui-api.js';
+import { generateBlueskyPosts, generateLinkedInPost, generateCompletion, generateBlogPost, SYSTEM_PROMPTS } from './open-webui-api.js';
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -34,9 +34,23 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json()); // Middleware to parse JSON bodies
 
+// --- Middleware to add app version to all responses ---
+const appVersion = process.env.APP_VERSION || 'dev';
+app.use((req, res, next) => {
+  res.locals.appVersion = appVersion;
+  next();
+});
+
 // --- Page Routes ---
 app.get('/', (req, res) => {
   res.render('index', { title: 'UCL Profile Fetcher', page: 'search' });
+});
+
+app.get('/about', (req, res) => {
+  res.render('about', {
+    title: 'About',
+    page: 'about'
+  });
 });
 
 app.get('/profile/:userId', (req, res) => {
@@ -86,6 +100,11 @@ app.get('/api/profile/:userId', async (req, res) => {
     console.error(`Error fetching data for user ${userId}:`, error.message);
     res.status(500).json({ error: `An error occurred while fetching data. ${error.message}` });
   }
+});
+
+// API endpoint to get all system prompts
+app.get('/api/prompts', (req, res) => {
+  res.json(SYSTEM_PROMPTS);
 });
 
 // API endpoint to fetch ORCID profile data with caching
@@ -141,8 +160,8 @@ app.post('/api/generate/bluesky', async (req, res) => {
 
   try {
     console.log(`Generating Bluesky posts for model: ${model}`);
-    const generatedContent = await generateBlueskyPosts(model, context);
-    res.json({ content: generatedContent });
+    const result = await generateBlueskyPosts(model, context);
+    res.json(result);
   } catch (error) {
     console.error('Error generating Bluesky posts:', error.message);
     res.status(500).json({ error: 'Failed to generate Bluesky posts.' });
@@ -160,11 +179,30 @@ app.post('/api/generate/linkedin', async (req, res) => {
 
   try {
     console.log(`Generating LinkedIn post for model: ${model}`);
-    const generatedContent = await generateLinkedInPost(model, context);
-    res.json({ content: generatedContent });
+    const result = await generateLinkedInPost(model, context);
+    res.json(result);
   } catch (error) {
     console.error('Error generating LinkedIn post:', error.message);
     res.status(500).json({ error: 'Failed to generate LinkedIn post.' });
+  }
+});
+
+// API endpoint to generate a Blog post
+app.post('/api/generate/blog', async (req, res) => {
+  const { context } = req.body;
+  const model = process.env.OPENWEBUI_MODEL || 'llama3';
+
+  if (!context) {
+    return res.status(400).json({ error: 'Context is required in the request body.' });
+  }
+
+  try {
+    console.log(`Generating blog post for model: ${model}`);
+    const result = await generateBlogPost(model, context);
+    res.json(result);
+  } catch (error) {
+    console.error('Error generating blog post:', error.message);
+    res.status(500).json({ error: 'Failed to generate blog post.' });
   }
 });
 
@@ -182,8 +220,8 @@ app.post('/api/generate/prompt', async (req, res) => {
     // A generic system prompt for the playground
     const systemPrompt = "You are a helpful assistant. Please respond to the user's query accurately and concisely.";
     const messages = [{ role: 'user', content: context }];
-    const generatedContent = await generateCompletion(model, messages, systemPrompt);
-    res.json({ content: generatedContent });
+    const result = await generateCompletion(model, messages, systemPrompt);
+    res.json(result);
   } catch (error) {
     console.error('Error in playground generation:', error.message);
     res.status(500).json({ error: 'Failed to generate completion from the AI model.' });
