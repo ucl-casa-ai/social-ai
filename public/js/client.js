@@ -212,7 +212,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (outputContainer) {
           outputContainer.style.display = 'none';
           const contentDiv = outputContainer.querySelector('.ai-output-content');
-          if (contentDiv) contentDiv.innerHTML = '';
+          if (contentDiv) {
+            // Remove TinyMCE instance if it exists
+            const editor = tinymce.get(contentDiv.id);
+            if (editor) {
+              editor.remove();
+            }
+            contentDiv.innerHTML = '';
+          }
           // Reset prompt view
           const promptWrapper = outputContainer.querySelector('.ai-prompt-wrapper');
           if (promptWrapper) {
@@ -310,7 +317,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (outputContainer) {
           outputContainer.style.display = 'none';
           const contentDiv = outputContainer.querySelector('.ai-output-content');
-          if (contentDiv) contentDiv.innerHTML = '';
+          if (contentDiv) {
+            const editor = tinymce.get(contentDiv.id);
+            if (editor) {
+              editor.remove();
+            }
+            contentDiv.innerHTML = '';
+          }
           // Reset prompt view
           const promptWrapper = outputContainer.querySelector('.ai-prompt-wrapper');
           if (promptWrapper) {
@@ -407,7 +420,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (outputContainer) {
           outputContainer.style.display = 'none';
           const contentDiv = outputContainer.querySelector('.ai-output-content');
-          if (contentDiv) contentDiv.innerHTML = '';
+          if (contentDiv) {
+            const editor = tinymce.get(contentDiv.id);
+            if (editor) {
+              editor.remove();
+            }
+            contentDiv.innerHTML = '';
+          }
           // Reset prompt view
           const promptWrapper = outputContainer.querySelector('.ai-prompt-wrapper');
           if (promptWrapper) {
@@ -591,7 +610,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             </div>
           </div>
           <div class="ai-output-container mt-3" id="ai-output-container-${index}" style="display: none;">
-            <div class="ai-output-content card-body bg-light border rounded" style="min-height: 200px;"></div>
+            <div id="ai-output-content-pub-${index}" class="ai-output-content"></div>
             <div class="d-flex justify-content-between align-items-center mt-2">
               <button class="btn btn-sm btn-secondary close-ai-output-btn" data-pub-index="${index}">Close & Clear</button>
               <a href="#" class="small text-muted show-prompt-link" data-pub-index="${index}">Show Prompt Data</a>
@@ -685,7 +704,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             </div>
           </div>
           <div class="ai-output-container mt-3" id="ai-output-container-grant-${index}" style="display: none;">
-            <div class="ai-output-content card-body bg-light border rounded" style="min-height: 200px;"></div>
+            <div id="ai-output-content-grant-${index}" class="ai-output-content"></div>
             <div class="d-flex justify-content-between align-items-center mt-2">
               <button class="btn btn-sm btn-secondary close-ai-output-btn" data-grant-index="${index}">Close & Clear</button>
               <a href="#" class="small text-muted show-prompt-link" data-grant-index="${index}">Show Prompt Data</a>
@@ -772,7 +791,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             </div>
           </div>
           <div class="ai-output-container mt-3" id="ai-output-container-teaching-${index}" style="display: none;">
-            <div class="ai-output-content card-body bg-light border rounded" style="min-height: 200px;"></div>
+            <div id="ai-output-content-teaching-${index}" class="ai-output-content"></div>
             <div class="d-flex justify-content-between align-items-center mt-2">
               <button class="btn btn-sm btn-secondary close-ai-output-btn" data-teaching-index="${index}">Close & Clear</button>
               <a href="#" class="small text-muted show-prompt-link" data-teaching-index="${index}">Show Prompt Data</a>
@@ -834,10 +853,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Store the prompt type on the container for other buttons to use
     outputElement.parentElement.dataset.promptType = type;
 
+    // Before doing anything else, check for and remove any existing TinyMCE instance.
+    // This ensures the old editor is gone before we show the loading spinner.
+    if (tinymce.get(outputElement.id)) {
+      tinymce.remove(`#${outputElement.id}`);
+    }
+
     const promptWrapper = outputElement.parentElement.querySelector('.ai-prompt-wrapper');
     const promptContainer = promptWrapper ? promptWrapper.querySelector('.ai-prompt-content') : null;
-    const showPromptLink = outputElement.parentElement.querySelector('.show-prompt-link');
-    if (promptContainer && showPromptLink) {
+    if (promptContainer) {
       try {
         // The user data is the itemData object, formatted as a JSON string.
         const userDataString = JSON.stringify(itemData, null, 2);
@@ -850,8 +874,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // Set loading state in the main output element
-    // Add flex classes to center the spinner. We'll remove them in the finally block.
-    outputElement.classList.add('d-flex', 'justify-content-center', 'align-items-center');
+    outputElement.classList.add('d-flex', 'justify-content-center', 'align-items-center', 'card-body', 'bg-light', 'border', 'rounded');
     outputElement.innerHTML = `
       <div class="spinner-border text-primary" role="status">
         <span class="visually-hidden">Loading...</span>
@@ -882,15 +905,101 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
       // Use marked to parse the markdown content into HTML, then sanitize it with DOMPurify
       // to prevent XSS attacks from the LLM's output.
-      const dirtyHtml = marked.parse(result.content);
-      outputElement.innerHTML = DOMPurify.sanitize(dirtyHtml);
-      // The prompt is now shown before the request is sent, so the block
-      // that previously populated it from the server response is no longer needed.
+      const dirtyHtml = marked.parse(result.content || '');
+      const cleanHtml = DOMPurify.sanitize(dirtyHtml);
+
+      // Clear loading spinner and prepare for editor
+      outputElement.innerHTML = '';
+      outputElement.classList.remove('d-flex', 'justify-content-center', 'align-items-center');
+
+      // The div needs the content *before* TinyMCE initializes on it.
+      outputElement.innerHTML = cleanHtml;
+
+      // Initialize TinyMCE
+      tinymce.init({
+        selector: `#${outputElement.id}`,
+        height: 350,
+        menubar: 'file edit insert view format table tools help',
+        license_key: 'gpl',
+        plugins: [
+          'advlist', 'autolink', 'lists', 'link', 'image', 'charmap',
+          'preview', 'anchor', 'searchreplace', 'visualblocks', 'code',
+          'fullscreen', 'insertdatetime', 'media', 'table', 'help', 'wordcount', 'contextmenu'
+        ],
+        toolbar: 'undo redo | blocks | ' +
+          'bold italic forecolor | alignleft aligncenter ' +
+          'alignright alignjustify | bullist numlist outdent indent | link image' +
+          'removeformat | help',
+        content_style: 'body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif; font-size:16px }',
+        contextmenu: 'copy paste | customItem1',
+        setup: function (editor) {
+          // Use editor.ui.registry.addMenuItem for TinyMCE 5+
+          editor.ui.registry.addMenuItem('customItem1', {
+              text: 'Generate Image',
+              icon: 'image', // Added an icon for better UX
+              onAction: async function () {
+                const selectedText = editor.selection.getContent({ format: 'text' }).trim();
+                if (!selectedText) {
+                  editor.notificationManager.open({
+                    text: 'Please select text to use as a prompt for the image.',
+                    type: 'warning',
+                    timeout: 5000
+                  });
+                  return;
+                }
+
+                // Collapse the selection to the end, so we insert *after* it.
+                editor.selection.collapse(false);
+
+                // Show a loading indicator in the editor
+                editor.setProgressState(true, 'Generating image...');
+
+                try {
+                  const response = await fetch('/api/generate/image', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt: { positive: selectedText } })
+                  });
+
+                  const result = await response.json();
+                  if (!response.ok) {
+                    throw new Error(result.error || 'Server returned an error.');
+                  }
+
+                  if (result.imageUrl) {
+                    const imageHtml = `
+                      <p style="text-align: left;">
+                        <img src="${result.imageUrl}" alt="${selectedText}" style="max-width: 25%; height: auto; border: 1px solid #ddd; border-radius: 4px; padding: 5px;" />
+                        <br />
+                        <em><a href="${result.imageUrl}" target="_blank">View Image</a></em>
+                      </p>
+                    `;
+                    // Insert the generated image HTML at the cursor position (which is now after the selection).
+                    editor.execCommand('mceInsertContent', false, imageHtml);
+                  } else {
+                    throw new Error('Image URL was not returned from the server.');
+                  }
+                } catch (error) {
+                  console.error('Image generation failed:', error);
+                  editor.notificationManager.open({
+                    text: `Error: ${error.message}`,
+                    type: 'error',
+                    timeout: 7000
+                  });
+                } finally {
+                  // Hide the loading indicator
+                  editor.setProgressState(false);
+                }
+              }
+          });
+        }
+      });
     } catch (error) {
+      // If an error occurs, make sure to clean up the loading spinner before showing the error.
+      outputElement.classList.remove('d-flex', 'justify-content-center', 'align-items-center');
       outputElement.innerHTML = `<div class="alert alert-danger m-0"><strong>Error:</strong> ${error.message}</div>`;
     } finally {
-      // Remove the centering classes so the final content displays normally
-      outputElement.classList.remove('d-flex', 'justify-content-center', 'align-items-center');
+      // Re-enable buttons
       buttons.forEach(btn => btn.disabled = false);
       clickedButton.innerHTML = originalButtonContent;
     }
@@ -1020,11 +1129,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
       }
 
+      // If an editor instance exists, remove it before generating new content.
+      if (tinymce.get(resultsDiv.id)) {
+        tinymce.remove(`#${resultsDiv.id}`);
+      }
+
       const originalButtonHTML = button.innerHTML;
       // Disable all buttons to prevent multiple requests
-      [submitBtn, linkedinBtn, blueskyBtn, blogBtn].forEach(btn => { if(btn) btn.disabled = true; });
+      [linkedinBtn, blueskyBtn, blogBtn].forEach(btn => { if(btn) btn.disabled = true; });
       button.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Sending...`;
       resultsContainer.classList.remove('d-none');
+      // Clear the results div and show a loading spinner
       resultsDiv.innerHTML = `
         <div class="d-flex justify-content-center align-items-center p-5">
           <div class="spinner-border text-primary" role="status">
@@ -1044,13 +1159,88 @@ document.addEventListener('DOMContentLoaded', async () => {
         const result = await response.json();
         if (!response.ok) throw new Error(result.error || 'Failed to get a valid response from the server.');
         // Sanitize the HTML output from the LLM to prevent XSS
-        const dirtyHtml = marked.parse(result.content);
-        resultsDiv.innerHTML = DOMPurify.sanitize(dirtyHtml);
+        const dirtyHtml = marked.parse(result.content || '');
+        const cleanHtml = DOMPurify.sanitize(dirtyHtml);
+
+        // Clear loading spinner and prepare for editor
+        resultsDiv.innerHTML = '';
+        resultsDiv.innerHTML = cleanHtml;
+
+        // Initialize TinyMCE, reusing the config from the profile page
+        tinymce.init({
+          selector: `#${resultsDiv.id}`,
+          height: 800,
+          menubar: 'file edit insert view format table tools help',
+          license_key: 'gpl',
+          plugins: [
+            'advlist', 'autolink', 'lists', 'link', 'image', 'charmap',
+            'preview', 'anchor', 'searchreplace', 'visualblocks', 'code',
+            'fullscreen', 'insertdatetime', 'media', 'table', 'help', 'wordcount', 'contextmenu'
+          ],
+          toolbar: 'undo redo | blocks | ' +
+            'bold italic forecolor | alignleft aligncenter ' +
+            'alignright alignjustify | bullist numlist outdent indent | link image' +
+            'removeformat | help',
+          content_style: 'body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif; font-size:16px }',
+          contextmenu: 'copy paste | customItem1',
+          setup: function (editor) {
+            editor.ui.registry.addMenuItem('customItem1', {
+              text: 'Generate Image',
+              icon: 'image',
+              onAction: async function () {
+                const selectedText = editor.selection.getContent({ format: 'text' }).trim();
+                if (!selectedText) {
+                  editor.notificationManager.open({
+                    text: 'Please select text to use as a prompt for the image.',
+                    type: 'warning',
+                    timeout: 5000
+                  });
+                  return;
+                }
+                editor.selection.collapse(false);
+                editor.setProgressState(true, 'Generating image...');
+                try {
+                  const response = await fetch('/api/generate/image', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt: { positive: selectedText } })
+                  });
+                  const result = await response.json();
+                  if (!response.ok) {
+                    throw new Error(result.error || 'Server returned an error.');
+                  }
+                  if (result.imageUrl) {
+                    const imageHtml = `
+                      <p style="text-align: left;">
+                        <img src="${result.imageUrl}" alt="${selectedText}" style="max-width: 25%; height: auto; border: 1px solid #ddd; border-radius: 4px; padding: 5px;" />
+                        <br />
+                        <em><a href="${result.imageUrl}" target="_blank">View Image</a></em>
+                      </p>
+                    `;
+                    editor.execCommand('mceInsertContent', false, imageHtml);
+                  } else {
+                    throw new Error('Image URL was not returned from the server.');
+                  }
+                } catch (error) {
+                  console.error('Image generation failed:', error);
+                  editor.notificationManager.open({
+                    text: `Error: ${error.message}`,
+                    type: 'error',
+                    timeout: 7000
+                  });
+                } finally {
+                  editor.setProgressState(false);
+                }
+              }
+            });
+          }
+        });
       } catch (error) {
+        // If an editor was being created, it won't be, so just show the error.
         resultsDiv.innerHTML = `<div class="alert alert-danger m-0"><strong>Error:</strong> ${error.message}</div>`;
       } finally {
         // Re-enable all buttons
-        [submitBtn, linkedinBtn, blueskyBtn, blogBtn].forEach(btn => { if(btn) btn.disabled = false; });
+        [linkedinBtn, blueskyBtn, blogBtn].forEach(btn => { if(btn) btn.disabled = false; });
         button.innerHTML = originalButtonHTML;
       }
     };
