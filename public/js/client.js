@@ -922,6 +922,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         menubar: 'file edit insert view format table tools help',
         license_key: 'gpl',
         branding:false,
+        promotion: false,
         plugins: [
           'advlist', 'autolink', 'lists', 'link', 'image', 'charmap',
           'preview', 'anchor', 'searchreplace', 'visualblocks', 'code',
@@ -1174,6 +1175,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           menubar: 'file edit insert view format table tools help',
           license_key: 'gpl',
           branding:false,
+          promotion: false,
           plugins: [
             'advlist', 'autolink', 'lists', 'link', 'image', 'charmap',
             'preview', 'anchor', 'searchreplace', 'visualblocks', 'code',
