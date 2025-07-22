@@ -921,6 +921,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         height: 350,
         menubar: 'file edit insert view format table tools help',
         license_key: 'gpl',
+        branding:false
         plugins: [
           'advlist', 'autolink', 'lists', 'link', 'image', 'charmap',
           'preview', 'anchor', 'searchreplace', 'visualblocks', 'code',
@@ -1172,6 +1173,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           height: 800,
           menubar: 'file edit insert view format table tools help',
           license_key: 'gpl',
+          branding:false,
           plugins: [
             'advlist', 'autolink', 'lists', 'link', 'image', 'charmap',
             'preview', 'anchor', 'searchreplace', 'visualblocks', 'code',
