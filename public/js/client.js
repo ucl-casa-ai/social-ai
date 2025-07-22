@@ -921,7 +921,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         height: 350,
         menubar: 'file edit insert view format table tools help',
         license_key: 'gpl',
-        branding:false
+        branding:false,
         plugins: [
           'advlist', 'autolink', 'lists', 'link', 'image', 'charmap',
           'preview', 'anchor', 'searchreplace', 'visualblocks', 'code',
