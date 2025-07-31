@@ -41,6 +41,7 @@ async function fetchPublications(userId) {
     body: JSON.stringify({
       objectId: userId,
       objectType: 'user',
+      category:"user",
       pagination: { perPage: 100, startFrom: 0 },
       sort: 'dateDesc',
       favouritesFirst: false,
@@ -69,6 +70,7 @@ async function fetchTeaching(userId) {
     body: JSON.stringify({
       objectId: userId,
       objectType: 'user',
+      category:"user",
       pagination: { perPage: 100, startFrom: 0 },
       sort: 'dateDesc',
       favouritesFirst: true,

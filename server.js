@@ -115,6 +115,7 @@ app.get('/api/profile/:userId', async (req, res) => {
     const profileData = await getProfile(userId);
     res.json(profileData);
   } catch (error) {
+    console.log(error);
     console.error(`Error fetching data for user ${userId}:`, error.message);
     res.status(500).json({ error: `An error occurred while fetching data. ${error.message}` });
   }
