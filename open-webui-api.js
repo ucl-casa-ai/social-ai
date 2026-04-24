@@ -1,6 +1,7 @@
 import fetch from 'node-fetch';
 import dotenv from 'dotenv';
 import { URL } from 'url';
+import { logModelQuery } from './db.js';
 
 // Load environment variables from .env file
 dotenv.config({ debug: false, quiet: true });
@@ -60,9 +61,16 @@ export async function generateCompletion(model, messages, systemPrompt) {
 
     // According to OpenAI spec, the response contains a `choices` array.
     if (data && data.choices && data.choices[0] && data.choices[0].message && typeof data.choices[0].message.content === 'string') {
+        const responseText = data.choices[0].message.content.trim();
+        let logId = null;
+        try {
+            logId = await logModelQuery(model, fullMessages, responseText);
+        } catch(e) { console.error(e); }
+        
         return {
-            content: data.choices[0].message.content.trim(),
-            prompt: fullMessages
+            content: responseText,
+            prompt: fullMessages,
+            logId: logId
         };
     } else {
         throw new Error('Invalid or unexpected response format from OpenWebUI API.');
@@ -79,6 +87,8 @@ export const SYSTEM_PROMPTS = {
     You are an expert academic social media manager. Your task is to generate a series of five (5) engaging posts for the social media platform Bluesky. I will provide the full context of a new academic article below.
 
     Your primary goal is to write a series of posts that would encourage other academics to read the full article.
+
+    CRITICAL INSTRUCTION: You MUST write original social media posts. DO NOT simply repeat, copy, or output the raw text provided in the <EXTRACTED_CONTEXT> tags. Use the <EXTRACTED_CONTEXT> strictly as source material to write your engaging posts.
 
     **Audience:** The target audience is other academics and researchers. This includes specialists in the article's immediate field as well as those in related disciplines who may find the work relevant.
 
@@ -102,6 +112,8 @@ export const SYSTEM_PROMPTS = {
     You are a strategic communications expert specializing in bridging the gap between academia and industry. Your task is to write a single, compelling LinkedIn post to promote a new academic article. I will provide the full context of the article below.
     
     The goal is to generate interest and demonstrate the value of this research to a professional, non-academic audience.
+
+    CRITICAL INSTRUCTION: You MUST write an original LinkedIn post. DO NOT simply repeat, copy, or output the raw text provided in the <EXTRACTED_CONTEXT> tags. Use the <EXTRACTED_CONTEXT> strictly as source material to write your engaging post.
 
     Audience: The target audience consists of professionals in industry, government, and the third sector (non-profits, charities). They are not academics and will be most interested in the practical applications, real-world relevance, and potential impact of the research.
 
@@ -140,6 +152,8 @@ export const SYSTEM_PROMPTS = {
 
     The goal is to make the research accessible to a broad, intelligent audience that may not have specialist knowledge in the field. The tone should be informative, engaging, and professional.
 
+    CRITICAL INSTRUCTION: You MUST write a brand new, original blog post following the structure below. DO NOT simply repeat, copy, or output the raw text provided in the <EXTRACTED_CONTEXT> tags. Use the <EXTRACTED_CONTEXT> strictly as source material to write your engaging blog post.
+
     **Audience:** A general but educated audience (e.g., readers of publications like Scientific American, New Scientist, or well-regarded tech/science blogs). They are curious about research but need complex ideas explained clearly.
 
     **Instructions:**
@@ -171,7 +185,7 @@ export const SYSTEM_PROMPTS = {
  */
 export async function generateBlueskyPosts(model, articleContext) {
   const systemPrompt = SYSTEM_PROMPTS.bluesky;
-  const messages = [{ role: 'user', content: articleContext }];
+  const messages = [{ role: 'user', content: `Please generate the content based on the following article data:\n\n${articleContext}` }];
   console.log(`Sending prompt to model "${model}" via OpenWebUI to generate Bluesky posts...`);
 
   return generateCompletion(model, messages, systemPrompt);
@@ -185,7 +199,7 @@ export async function generateBlueskyPosts(model, articleContext) {
  */
 export async function generateLinkedInPost(model, articleContext) {
   const systemPrompt = SYSTEM_PROMPTS.linkedin;
-  const messages = [{ role: 'user', content: articleContext }];
+  const messages = [{ role: 'user', content: `Please generate the content based on the following article data:\n\n${articleContext}` }];
   
   console.log(`Sending prompt to model "${model}" via OpenWebUI to generate Linked-In post...`);
 
@@ -201,7 +215,7 @@ export async function generateLinkedInPost(model, articleContext) {
 export async function generateBlogPost(model, itemContext) {
   const systemPrompt = SYSTEM_PROMPTS.blog;
 
-  const messages = [{ role: 'user', content: itemContext }];
+  const messages = [{ role: 'user', content: `Please generate the content based on the following article data:\n\n${itemContext}` }];
 
   console.log(`Sending prompt to model "${model}" via OpenWebUI to generate a blog post...`);
 

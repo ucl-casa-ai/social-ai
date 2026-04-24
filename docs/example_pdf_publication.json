@@ -1,0 +1,118 @@
+{
+    "discoveryId": "2459355",
+    "authors": [
+        {
+            "nameShortFormat": "Ma D",
+            "firstNameLastName": "Dongyi Ma",
+            "fullName": "Dongyi Ma",
+            "resolvedUser": {
+                "objectId": 90185,
+                "discoveryId": "90185",
+                "discoveryUrlId": "90185-dongyi-ma"
+            }
+        },
+        {
+            "nameShortFormat": "De Jode M",
+            "firstNameLastName": "Martin De Jode",
+            "fullName": "Martin De Jode",
+            "resolvedUser": {
+                "objectId": 8810,
+                "discoveryId": "8810",
+                "discoveryUrlId": "8810-martin-de-jode"
+            }
+        },
+        {
+            "nameShortFormat": "MacLachlan A",
+            "firstNameLastName": "Andrew MacLachlan",
+            "fullName": "Andrew MacLachlan",
+            "resolvedUser": {
+                "objectId": 72290,
+                "discoveryId": "72290",
+                "discoveryUrlId": "72290-andrew-maclachlan"
+            }
+        },
+        {
+            "nameShortFormat": "Hudson-Smith A",
+            "firstNameLastName": "Andrew Hudson-Smith",
+            "fullName": "Andrew Hudson-Smith",
+            "resolvedUser": {
+                "objectId": 5261,
+                "discoveryId": "5261",
+                "discoveryUrlId": "5261-andy-hudsonsmith"
+            }
+        }
+    ],
+    "doi": "10.5281/zenodo.15225148",
+    "journal": "https://zenodo.org/communities/gisruk2025",
+    "nameOfConference": "33rd Annual GISRUK Conference 2025",
+    "startDate": {
+        "year": 2025,
+        "month": 4,
+        "day": 23,
+        "dateTime": "2025-04-23T00:00:00+01:00"
+    },
+    "endDate": {
+        "year": 2025,
+        "month": 4,
+        "day": 25,
+        "dateTime": "2025-04-25T00:00:00+01:00"
+    },
+    "acceptanceDate": {
+        "year": 2025,
+        "month": 2,
+        "day": 28,
+        "dateTime": "2025-02-28T00:00:00+00:00"
+    },
+    "publicationDate": {
+        "year": 2025,
+        "month": 4,
+        "day": 15,
+        "dateTime": "2025-04-15T00:00:00+01:00"
+    },
+    "publicUrl": "https://discovery.ucl.ac.uk/id/eprint/10219891",
+    "repositoryPdfUrl": "https://discovery.ucl.ac.uk/id/eprint/10219891/1/Hyperlocal%20Thermal%20Modeling%20with%20IoT%20Sensors%20and%20UMEP_final.pdf",
+    "objectTypeDisplayName": "Conference paper (text)",
+    "objectTypeSortIndex": 4,
+    "date1": {
+        "year": 2025,
+        "month": 4,
+        "day": 15,
+        "dateTime": "2025-04-15T00:00:00+01:00"
+    },
+    "favouritedByUserIds": [],
+    "objectId": 2459355,
+    "discoveryUrlId": "2459355",
+    "linkedObjectIds": {
+        "users": [
+            5261,
+            8810,
+            8810,
+            72290,
+            90185
+        ]
+    },
+    "labels": [
+        {
+            "value": "Urban Heat Modeling"
+        },
+        {
+            "value": "Internet of Things"
+        },
+        {
+            "value": "Hyperlocal Temperature Data"
+        },
+        {
+            "value": "Climate Mitigation Planning"
+        },
+        {
+            "value": "GIS Analysis"
+        }
+    ],
+    "hasThumbnail": false,
+    "updatedWhen": "2026-03-06T06:48:53.9584687+00:00",
+    "title": "Hyperlocal Thermal Modeling with IoT Sensors and UMEP in London's Queen Elizabeth Olympic Park",
+    "publicUrls": [
+        "https://discovery.ucl.ac.uk/id/eprint/10219891",
+        "https://doi.org/10.5281/zenodo.15225148"
+    ]
+}

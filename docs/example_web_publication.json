@@ -1,0 +1,153 @@
+{
+    "discoveryId": "2440725",
+    "authors": [
+        {
+            "nameShortFormat": "Vuilliomenet A",
+            "firstNameLastName": "Aude Vuilliomenet",
+            "fullName": "Aude Vuilliomenet",
+            "resolvedUser": {
+                "objectId": 85325,
+                "discoveryId": "85325",
+                "discoveryUrlId": "85325-aude-vuilliomenet"
+            }
+        },
+        {
+            "nameShortFormat": "Martinez Balvanera S",
+            "firstNameLastName": "Santiago Martinez Balvanera",
+            "fullName": "Santiago Martinez Balvanera",
+            "resolvedUser": {
+                "objectId": 81778,
+                "discoveryId": "81778",
+                "discoveryUrlId": "81778-santiago-martinez-balvanera"
+            }
+        },
+        {
+            "nameShortFormat": "Mac Aodha O",
+            "firstNameLastName": "Oisin Mac Aodha",
+            "fullName": "Oisin Mac Aodha"
+        },
+        {
+            "nameShortFormat": "Jones KE",
+            "firstNameLastName": "Kate Jones",
+            "fullName": "Kate E Jones",
+            "resolvedUser": {
+                "objectId": 35481,
+                "discoveryId": "35481",
+                "discoveryUrlId": "35481-kate-jones"
+            }
+        },
+        {
+            "nameShortFormat": "Wilson D",
+            "firstNameLastName": "Duncan Wilson",
+            "fullName": "Duncan Wilson",
+            "resolvedUser": {
+                "objectId": 38619,
+                "discoveryId": "38619",
+                "discoveryUrlId": "38619-duncan-wilson"
+            }
+        }
+    ],
+    "doi": "10.1111/2041-210x.70208",
+    "issn": "2041-210X",
+    "journal": "Methods in Ecology and Evolution",
+    "acceptanceDate": {
+        "year": 2025,
+        "month": 11,
+        "day": 7,
+        "dateTime": "2025-11-07T00:00:00+00:00"
+    },
+    "publicationDate": {
+        "year": 2025,
+        "month": 11,
+        "day": 21,
+        "dateTime": "2025-11-21T00:00:00+00:00"
+    },
+    "publicUrl": "https://discovery.ucl.ac.uk/id/eprint/10217117",
+    "publisher": "Wiley-Blackwell",
+    "publisherUrl": "https://besjournals.onlinelibrary.wiley.com/journal/2041210X",
+    "objectTypeDisplayName": "Journal article",
+    "objectTypeSortIndex": 3,
+    "date1": {
+        "year": 2025,
+        "month": 11,
+        "day": 21,
+        "dateTime": "2025-11-21T00:00:00+00:00"
+    },
+    "favouritedByUserIds": [],
+    "objectId": 2440725,
+    "discoveryUrlId": "2440725",
+    "linkedObjectIds": {
+        "users": [
+            85325,
+            81778,
+            38619,
+            35481
+        ]
+    },
+    "labels": [
+        {
+            "value": "artificial intelligence"
+        },
+        {
+            "value": "biodiversity monitoring"
+        },
+        {
+            "value": "edge computing"
+        },
+        {
+            "value": "passive acoustic monitoring"
+        },
+        {
+            "value": "Raspberry Pi"
+        },
+        {
+            "value": "software"
+        },
+        {
+            "value": "Science & Technology"
+        },
+        {
+            "value": "Life Sciences & Biomedicine"
+        },
+        {
+            "value": "Ecology"
+        },
+        {
+            "value": "Environmental Sciences & Ecology"
+        },
+        {
+            "value": "bioinformatics"
+        },
+        {
+            "schemeDisplayName": "Fields of Research (2008)",
+            "value": "Environmental Science and Management"
+        },
+        {
+            "schemeDisplayName": "Fields of Research (2008)",
+            "value": "Ecology"
+        },
+        {
+            "schemeDisplayName": "Fields of Research (2008)",
+            "value": "Evolutionary Biology"
+        },
+        {
+            "schemeDisplayName": "Fields of Research (2020)",
+            "value": "Ecology"
+        },
+        {
+            "schemeDisplayName": "Fields of Research (2020)",
+            "value": "Zoology"
+        },
+        {
+            "schemeDisplayName": "Fields of Research (2020)",
+            "value": "Environmental management"
+        }
+    ],
+    "hasThumbnail": false,
+    "updatedWhen": "2026-03-06T06:44:14.5622555+00:00",
+    "title": "acoupi: An Open-Source Python Framework for Deploying Bioacoustic AI Models on Edge Devices",
+    "publicUrls": [
+        "https://discovery.ucl.ac.uk/id/eprint/10217117",
+        "https://doi.org/10.1111/2041-210x.70208"
+    ]
+}

@@ -9,6 +9,8 @@ import { promises as fs } from 'fs';
 import { getProfile } from './ucl-api.js';
 import { getOrcidProfileWithToken } from './orcid-client.js';
 import { generateBlueskyPosts, generateLinkedInPost, generateCompletion, generateBlogPost, SYSTEM_PROMPTS } from './open-webui-api.js';
+import { initDb, searchChunks } from './db.js';
+import { processDocument, getEmbedding } from './ingest.js';
 
 dotenv.config();
 
@@ -21,8 +23,12 @@ const __dirname = path.dirname(__filename);
 
 // --- Create cache directory on startup ---
 const cacheDir = path.join(__dirname, 'cache');
+const profileCacheDir = path.join(cacheDir, 'profiles');
 try {
   await fs.mkdir(cacheDir, { recursive: true });
+  await fs.mkdir(profileCacheDir, { recursive: true });
+  console.log('Cache directory is set up at', cacheDir);
+  console.log('Profile cache directory is set up at', profileCacheDir);
 } catch (error) {
   console.error('Could not create cache directory.', error);
 }
@@ -39,6 +45,9 @@ try {
   console.error(`Could not load ComfyUI workflow file "${comfyWorkflowFile}". The /api/generate/image endpoint will not work.`, error);
   comfyWorkflowFile = null; // To indicate failure
 }
+
+// --- Init Database ---
+await initDb();
 
 // --- View Engine Setup ---
 // Use EJS as the templating engine to allow for dynamic partials.
@@ -134,7 +143,7 @@ app.get('/api/orcid/:orcidId', async (req, res) => {
     return res.status(400).json({ error: 'Invalid ORCID iD format.' });
   }
 
-  const cacheFilePath = path.join(cacheDir, `${orcidId}.json`);
+  const cacheFilePath = path.join(cacheDir, "orcid",`${orcidId}.json`);
 
   // 1. Check cache first
   try {
@@ -168,9 +177,60 @@ app.get('/api/orcid/:orcidId', async (req, res) => {
   }
 });
 
+// RAG Helper function to inject context
+async function enhanceContextWithRag(contextStr, userId) {
+    let itemData = {};
+    let publicUrl = null;
+
+    try {
+        itemData = JSON.parse(contextStr);
+        if (itemData.repositoryPdfUrl) {
+            publicUrl = itemData.repositoryPdfUrl;
+        } else if (itemData.publicUrls && itemData.publicUrls.length > 0) {
+            const pdfLink = itemData.publicUrls.find(l => l.toLowerCase().endsWith('.pdf'));
+            publicUrl = pdfLink || itemData.publicUrls[0];
+        } else if (itemData.publicUrl) {
+            publicUrl = itemData.publicUrl;
+        }
+    } catch (error) {
+        // Fallback: use Regex for robust extraction in case of trailing artifacts
+        const pdfMatch = contextStr.match(/"repositoryPdfUrl"\s*:\s*"([^"]+)"/);
+        if (pdfMatch) publicUrl = pdfMatch[1];
+        else {
+            const arrMatch = contextStr.match(/"publicUrls"\s*:\s*\[\s*"([^"]+)"/);
+            if (arrMatch) publicUrl = arrMatch[1];
+        }
+    }
+    
+    if (!publicUrl) return contextStr;
+    const safeUserId = userId || 'anonymous';
+    
+    try {    
+        console.log(`Starting RAG pipeline for ${publicUrl} (User: ${safeUserId})`);
+        try {
+            await processDocument(publicUrl, safeUserId);
+        } catch(e) {
+            console.log(`Ingestion info: ${e.message}`);
+        }
+        
+        const titleAndDesc = (itemData.title || "") + " " + (itemData.description || itemData.abstract || "");
+        const queryEmbedding = await getEmbedding(titleAndDesc);
+        const chunks = await searchChunks(safeUserId, publicUrl, queryEmbedding, 4);
+        
+        if (chunks.length > 0) {
+            const extractedText = chunks.map(c => c.chunk_text).join('\n\n---\n\n');
+            console.log(`Found ${chunks.length} chunks from DB for context injection.`);
+            return { text: `${contextStr}\n\n<EXTRACTED_CONTEXT>\n${extractedText}\n</EXTRACTED_CONTEXT>`, ragApplied: true };
+        }
+    } catch(err) {
+        console.error("RAG Enhancement Error:", err);
+    }
+    return { text: contextStr, ragApplied: false };
+}
+
 // API endpoint to generate Bluesky posts
 app.post('/api/generate/bluesky', async (req, res) => {
-  const { context } = req.body;
+  const { context, userId } = req.body;
   const model = process.env.OPENWEBUI_MODEL || 'llama3';
 
   if (!context) {
@@ -179,7 +239,9 @@ app.post('/api/generate/bluesky', async (req, res) => {
 
   try {
     console.log(`Generating Bluesky posts for model: ${model}`);
-    const result = await generateBlueskyPosts(model, context);
+    const enhancedContext = await enhanceContextWithRag(context, userId);
+    const result = await generateBlueskyPosts(model, enhancedContext.text);
+    result.ragApplied = enhancedContext.ragApplied;
     res.json(result);
   } catch (error) {
     console.error('Error generating Bluesky posts:', error.message);
@@ -189,7 +251,7 @@ app.post('/api/generate/bluesky', async (req, res) => {
 
 // API endpoint to generate a LinkedIn post
 app.post('/api/generate/linkedin', async (req, res) => {
-  const { context } = req.body;
+  const { context, userId } = req.body;
   const model = process.env.OPENWEBUI_MODEL || 'llama3';
 
   if (!context) {
@@ -198,7 +260,9 @@ app.post('/api/generate/linkedin', async (req, res) => {
 
   try {
     console.log(`Generating LinkedIn post for model: ${model}`);
-    const result = await generateLinkedInPost(model, context);
+    const enhancedContext = await enhanceContextWithRag(context, userId);
+    const result = await generateLinkedInPost(model, enhancedContext.text);
+    result.ragApplied = enhancedContext.ragApplied;
     res.json(result);
   } catch (error) {
     console.error('Error generating LinkedIn post:', error.message);
@@ -208,7 +272,7 @@ app.post('/api/generate/linkedin', async (req, res) => {
 
 // API endpoint to generate a Blog post
 app.post('/api/generate/blog', async (req, res) => {
-  const { context } = req.body;
+  const { context, userId } = req.body;
   const model = process.env.OPENWEBUI_MODEL || 'llama3';
 
   if (!context) {
@@ -217,7 +281,9 @@ app.post('/api/generate/blog', async (req, res) => {
 
   try {
     console.log(`Generating blog post for model: ${model}`);
-    const result = await generateBlogPost(model, context);
+    const enhancedContext = await enhanceContextWithRag(context, userId);
+    const result = await generateBlogPost(model, enhancedContext.text);
+    result.ragApplied = enhancedContext.ragApplied;
     res.json(result);
   } catch (error) {
     console.error('Error generating blog post:', error.message);
@@ -245,6 +311,22 @@ app.post('/api/generate/prompt', async (req, res) => {
     console.error('Error in playground generation:', error.message);
     res.status(500).json({ error: 'Failed to generate completion from the AI model.' });
   }
+});
+
+// API endpoint to log user rating
+import { updateModelRating } from './db.js';
+app.post('/api/rate', async (req, res) => {
+    const { logId, rating } = req.body;
+    if (!logId || typeof rating !== 'number') {
+        return res.status(400).json({ error: 'logId and numeric rating required.' });
+    }
+    try {
+        await updateModelRating(logId, rating);
+        res.json({ success: true });
+    } catch(err) {
+        console.error('Rating update failed:', err);
+        res.status(500).json({ error: 'Failed to update rating in database.' });
+    }
 });
 
 // API endpoint to generate an image via ComfyUI

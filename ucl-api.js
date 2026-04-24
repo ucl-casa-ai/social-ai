@@ -32,26 +32,45 @@ async function fetchProfileData(userId) {
  */
 async function fetchPublications(userId) {
   const url = 'https://profiles.ucl.ac.uk/api/publications/linkedTo';
-  const options = {
-    method: 'POST',
-    headers: {
-      'accept': 'application/json',
-      'content-type': 'application/json',
-    },
-    body: JSON.stringify({
-      objectId: userId,
-      objectType: 'user',
-      category:"user",
-      pagination: { perPage: 100, startFrom: 0 },
-      sort: 'dateDesc',
-      favouritesFirst: false,
-    }),
-  };
-  const response = await fetch(url, options);
-  if (!response.ok) {
-    throw new Error(`Failed to fetch publications: ${response.statusText}`);
+  let allPublications = [];
+  let startFrom = 0;
+  const perPage = 100;
+  let hasMore = true;
+
+  while (hasMore) {
+    const options = {
+      method: 'POST',
+      headers: {
+        'accept': 'application/json',
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        objectId: userId,
+        objectType: 'user',
+        category: "user",
+        pagination: { perPage, startFrom },
+        sort: 'dateDesc',
+        favouritesFirst: false,
+      }),
+    };
+
+    const response = await fetch(url, options);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch publications for user ${userId} at offset ${startFrom}: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    const resource = data.resource || [];
+    allPublications.push(...resource);
+
+    if (resource.length < perPage) {
+      hasMore = false;
+    } else {
+      startFrom += perPage;
+    }
   }
-  return response.json();
+
+  return { resource: allPublications };
 }
 
 /**
@@ -106,7 +125,9 @@ async function fetchGrantsFromUcl(userId) {
   };
   const response = await fetch(url, options);
   if (!response.ok) {
-    throw new Error(`Failed to fetch grants: ${response.statusText}`);
+    //throw new Error(`Failed to fetch grants: ${response.statusText}`);
+    console.error(`Failed to fetch grants from UCL Profiles API for user ${userId}: ${response.statusText}`);
+    return {};
   }
   return response.json();
 }

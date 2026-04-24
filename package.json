@@ -10,12 +10,16 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "csv-parse": "^6.1.0",
     "dotenv": "^17.0.1",
     "ejs": "^3.1.10",
     "express": "^4.21.2",
     "helmet": "^8.1.0",
     "node-fetch": "^3.3.2",
     "nodemon": "^3.1.10",
+    "pdf-parse": "^2.4.5",
+    "pg": "^8.20.0",
+    "pgvector": "^0.2.1",
     "uuid": "^11.1.0"
   }
 }

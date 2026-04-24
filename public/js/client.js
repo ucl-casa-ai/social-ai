@@ -859,6 +859,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       tinymce.remove(`#${outputElement.id}`);
     }
 
+    // Clear any previous rating widgets
+    const previousWidget = outputElement.parentElement.querySelector('.rating-widget');
+    if (previousWidget) previousWidget.remove();
+    const previousBadge = outputElement.parentElement.querySelector('.badge:not(.rating-widget .badge)');
+    if (previousBadge) previousBadge.remove();
+
     const promptWrapper = outputElement.parentElement.querySelector('.ai-prompt-wrapper');
     const promptContainer = promptWrapper ? promptWrapper.querySelector('.ai-prompt-content') : null;
     if (promptContainer) {
@@ -892,11 +898,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       const endpoint = `/api/generate/${type}`;
       // The AI function expects a string context. Stringify the JSON object.
       const context = JSON.stringify(itemData, null, 2);
+      const currentUserId = window.location.pathname.split('/').pop() || 'default_user';
 
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ context }),
+        body: JSON.stringify({ context, userId: currentUserId }),
       });
 
       const result = await response.json();
@@ -996,6 +1003,62 @@ document.addEventListener('DOMContentLoaded', async () => {
           });
         }
       });
+
+      // Inject the RAG badge and Rating widget if a logId is present
+      const badgeHtml = result.ragApplied 
+        ? `<span class="badge bg-success bg-opacity-75"><i class="bi bi-robot"></i> Enhanced with RAG</span>`
+        : `<span class="badge bg-secondary bg-opacity-75"><i class="bi bi-file-text"></i> Standard Generation</span>`;
+      
+      const ratingWidget = result.logId ? `
+        <div class="d-flex align-items-center mt-2 rating-widget" id="rating-widget-${result.logId}">
+          ${badgeHtml}
+          <div class="ms-auto d-flex gap-2">
+            <button class="btn btn-sm btn-outline-success rate-btn" data-log-id="${result.logId}" data-rating="1" title="Good Response">
+              <i class="bi bi-hand-thumbs-up"></i>
+            </button>
+            <button class="btn btn-sm btn-outline-danger rate-btn" data-log-id="${result.logId}" data-rating="-1" title="Poor Response">
+              <i class="bi bi-hand-thumbs-down"></i>
+            </button>
+          </div>
+        </div>
+      ` : badgeHtml;
+
+      // Append the widget below the editor container
+      outputElement.insertAdjacentHTML('afterend', ratingWidget);
+
+      // Attach event listeners to the new rating buttons
+      if (result.logId) {
+        document.querySelectorAll(`#rating-widget-${result.logId} .rate-btn`).forEach(btn => {
+          btn.addEventListener('click', async (e) => {
+            const currentBtn = e.currentTarget;
+            const logId = currentBtn.dataset.logId;
+            const rating = parseInt(currentBtn.dataset.rating, 10);
+            
+            // Disable buttons immediately
+            const widget = document.getElementById(`rating-widget-${logId}`);
+            if(widget) {
+                widget.querySelectorAll('.rate-btn').forEach(b => b.disabled = true);
+            }
+
+            try {
+              const rateRes = await fetch('/api/rate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ logId: parseInt(logId, 10), rating: rating })
+              });
+              if(rateRes.ok) {
+                currentBtn.classList.replace(`btn-outline-${rating === 1 ? 'success' : 'danger'}`, `btn-${rating === 1 ? 'success' : 'danger'}`);
+                currentBtn.innerHTML += ` <i class="bi bi-check2"></i>`;
+              } else {
+                console.error("Failed to submit rating");
+              }
+            } catch(err) {
+              console.error(err);
+            }
+          });
+        });
+      }
+
     } catch (error) {
       // If an error occurs, make sure to clean up the loading spinner before showing the error.
       outputElement.classList.remove('d-flex', 'justify-content-center', 'align-items-center');
