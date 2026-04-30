@@ -134,7 +134,7 @@ function createServer() {
 
 // Run server
 export async function startMcpServer() {
-  const PORT = process.env.MCP_PORT || 3001;
+  const PORT = process.env.MCP_PORT || 3002;
 
   // 1. Setup Stdio server
   const stdioServer = createServer();
