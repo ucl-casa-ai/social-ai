@@ -7,9 +7,13 @@
   "scripts": {
     "start": "node server.js",
     "live": "nodemon server.js",
+    "mcp": "node mcp-server.js",
+    "a2a": "node a2a-server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "@a2a-js/sdk": "^0.3.13",
+    "@modelcontextprotocol/sdk": "^1.29.0",
     "csv-parse": "^6.1.0",
     "dotenv": "^17.0.1",
     "ejs": "^3.1.10",

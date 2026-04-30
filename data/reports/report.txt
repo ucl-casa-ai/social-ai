@@ -1,0 +1,1806 @@
+
+================================================================================
+📊 UCL CASA STAFF PROFILE STATISTICS REPORT
+================================================================================
+Generated on: 1/14/2026, 11:24:59 AM
+Script:       fetchList.js
+Description:  Automated tool for fetching UCL staff profile data and generating 
+              comprehensive publication analytics.
+Data Source:  Local API (http://localhost:3000) & UCL Profiles API
+Output:       Individual JSON profiles and compiled statistical summaries.
+================================================================================
+
+🏁 Finished processing.
+✨ Processed 66 records (18 updated, 48 unchanged).
+⏭️  Skipped 8 records due to missing ID.
+
+📊 Compiling Statistics from Local Data...
+
+👤 Publications per Profile:
+Profile ID | Staff Name                | Pub Count
+-----------+---------------------------+----------
+11266      | Michael Batty             | 1070     
+8429       | Alan Wilson               | 487      
+3954       | Mark Tewdwr-Jones         | 360      
+5261       | Andy Hudson-Smith         | 241      
+24362      | Ed Manley                 | 122      
+71224      | Max Nathan                | 100      
+28795      | Adam Dennett              | 87       
+46973      | Chen Zhong                | 83       
+23068      | Jon Reades                | 76       
+89225      | Esra Suel                 | 72       
+71032      | Juste Raimbault           | 67       
+38619      | Duncan Wilson             | 58       
+57564      | Valerio Signorelli        | 54       
+31566      | Elsa Arcaute              | 52       
+3886       | Duncan Smith              | 43       
+8810       | Martin De Jode            | 43       
+8032       | Richard Milton            | 41       
+4441       | Steven Gray               | 40       
+98951      | Gerry Casey               | 37       
+42176      | Sarah Wise                | 35       
+37018      | Jens Kandt                | 34       
+45776      | Huanfa Chen               | 34       
+29137      | Leah Lovett               | 29       
+57137      | Bonnie Boyana Buyuklieva  | 26       
+72077      | Neave O'clery             | 26       
+62818      | Carmen Cabrera Arnau      | 25       
+2086       | Robin Morphet             | 24       
+56282      | Duncan Hay                | 23       
+40829      | Carlos Molinero           | 21       
+33505      | Thomas Evans              | 18       
+98496      | Claire Dooley             | 17       
+72165      | Mengdie Zhuang            | 16       
+86076      | Yikang Wang               | 15       
+79736      | Adam(zhengzi) Zhou        | 14       
+76275      | Fulvio Lopane             | 13       
+82618      | Beatrice Taylor           | 12       
+60726      | Jonathan Bourne           | 11       
+72290      | Andrew Maclachlan         | 10       
+86776      | Ollie Ballinger           | 10       
+99197      | Susannah Cramer-Greenbaum | 10       
+58120      | Nicolas Palominos Ortega  | 9        
+69145      | Bowen Zhang               | 8        
+1477       | Daryl Lloyd               | 7        
+93530      | Sukankana Chakraborty     | 7        
+104652     | Changwha Oh               | 5        
+75140      | Samuel Heroy              | 5        
+80029      | Sophie Ayling             | 5        
+95727      | Jishan Duan               | 4        
+100099     | Laura Mazzarino           | 3        
+80890      | Laura Sheppard            | 3        
+60113      | Paul Mullins              | 2        
+85325      | Aude Vuilliomenet         | 2        
+87941      | Wénlán Zhang              | 2        
+95256      | Adham Enaya               | 2        
+102714     | Clara Peiret-Garcia       | 1        
+39892      | Hrishikesh Ballal         | 1        
+79481      | Yuna Lee                  | 1        
+4815       | Simon Doyle               | 0        
+7113       | David Thorpe              | 0        
+90570      | Maurice Glucksman         | 0        
+91194      | Chukun Gao                | 0        
+93619      | Gavin Chait               | 0        
+93956      | Fuko Nakai-Miyagawa       | 0        
+95484      | Hong Deng                 | 0        
+96913      | Zhixuan (willow) Liu      | 0        
+98170      | Simon Gosling             | 0        
+
+
+📚 Publication Types by Year:
+
+--- 📅 Publications in 2026 ---
+Publication Type | Count
+-----------------+------
+Journal article  | 5    
+
+--- 📅 Publications in 2025 ---
+Publication Type                        | Count
+----------------------------------------+------
+Journal article                         | 99   
+Chapter                                 | 43   
+Preprint                                | 9    
+Conference paper (text)                 | 8    
+Book                                    | 5    
+Thesis / Dissertation                   | 4    
+Working/Discussion Paper                | 3    
+Conference abstract/presentation slides | 2    
+Exhibition                              | 2    
+Report                                  | 1    
+Other                                   | 1    
+Poster                                  | 1    
+
+--- 📅 Publications in 2024 ---
+Publication Type                        | Count
+----------------------------------------+------
+Journal article                         | 87   
+Preprint                                | 20   
+Chapter                                 | 14   
+Conference paper (text)                 | 8    
+Conference abstract/presentation slides | 2    
+Working/Discussion Paper                | 2    
+Exhibition                              | 2    
+Thesis / Dissertation                   | 1    
+
+--- 📅 Publications in 2023 ---
+Publication Type                        | Count
+----------------------------------------+------
+Journal article                         | 86   
+Preprint                                | 22   
+Conference paper (text)                 | 18   
+Chapter                                 | 13   
+Conference abstract/presentation slides | 11   
+Working/Discussion Paper                | 5    
+Exhibition                              | 3    
+Thesis / Dissertation                   | 2    
+Report                                  | 1    
+
+--- 📅 Publications in 2022 ---
+Publication Type                        | Count
+----------------------------------------+------
+Journal article                         | 99   
+Preprint                                | 9    
+Chapter                                 | 7    
+Conference paper (text)                 | 6    
+Conference abstract/presentation slides | 5    
+Working/Discussion Paper                | 3    
+Book                                    | 2    
+Digital Resource                        | 2    
+Thesis / Dissertation                   | 1    
+Exhibition                              | 1    
+Dataset                                 | 1    
+
+--- 📅 Publications in 2021 ---
+Publication Type                        | Count
+----------------------------------------+------
+Journal article                         | 116  
+Chapter                                 | 33   
+Conference paper (text)                 | 11   
+Conference abstract/presentation slides | 11   
+Working/Discussion Paper                | 7    
+Book                                    | 5    
+Thesis / Dissertation                   | 4    
+Report                                  | 3    
+Dataset                                 | 2    
+Performance                             | 2    
+
+--- 📅 Publications in 2020 ---
+Publication Type                        | Count
+----------------------------------------+------
+Journal article                         | 66   
+Chapter                                 | 21   
+Working/Discussion Paper                | 10   
+Conference paper (text)                 | 8    
+Preprint                                | 4    
+Conference abstract/presentation slides | 4    
+Book                                    | 3    
+Software / Code                         | 3    
+Dataset                                 | 3    
+Report                                  | 2    
+
+--- 📅 Publications in 2019 ---
+Publication Type                        | Count
+----------------------------------------+------
+Journal article                         | 60   
+Conference paper (text)                 | 22   
+Chapter                                 | 11   
+Conference abstract/presentation slides | 9    
+Working/Discussion Paper                | 8    
+Book                                    | 6    
+Thesis / Dissertation                   | 6    
+Exhibition                              | 5    
+Preprint                                | 2    
+Report                                  | 1    
+
+--- 📅 Publications in 2018 ---
+Publication Type                        | Count
+----------------------------------------+------
+Journal article                         | 51   
+Conference paper (text)                 | 28   
+Chapter                                 | 10   
+Working/Discussion Paper                | 6    
+Conference abstract/presentation slides | 5    
+Book                                    | 3    
+Report                                  | 2    
+Preprint                                | 1    
+Digital Resource                        | 1    
+Poster                                  | 1    
+
+--- 📅 Publications in 2017 ---
+Publication Type                        | Count
+----------------------------------------+------
+Journal article                         | 45   
+Chapter                                 | 34   
+Conference paper (text)                 | 16   
+Conference abstract/presentation slides | 3    
+Working/Discussion Paper                | 3    
+Report                                  | 3    
+Dataset                                 | 3    
+Preprint                                | 2    
+Thesis / Dissertation                   | 1    
+
+--- 📅 Publications in 2016 ---
+Publication Type                        | Count
+----------------------------------------+------
+Journal article                         | 54   
+Chapter                                 | 31   
+Conference paper (text)                 | 15   
+Conference abstract/presentation slides | 5    
+Report                                  | 5    
+Thesis / Dissertation                   | 3    
+Working/Discussion Paper                | 2    
+Book                                    | 2    
+Exhibition                              | 1    
+Dataset                                 | 1    
+
+--- 📅 Publications in 2015 ---
+Publication Type                        | Count
+----------------------------------------+------
+Journal article                         | 60   
+Conference paper (text)                 | 37   
+Chapter                                 | 14   
+Report                                  | 5    
+Thesis / Dissertation                   | 5    
+Working/Discussion Paper                | 4    
+Conference abstract/presentation slides | 3    
+Book                                    | 2    
+Other                                   | 2    
+
+--- 📅 Publications in 2014 ---
+Publication Type                        | Count
+----------------------------------------+------
+Journal article                         | 56   
+Conference paper (text)                 | 14   
+Chapter                                 | 10   
+Conference abstract/presentation slides | 6    
+Working/Discussion Paper                | 3    
+Report                                  | 3    
+Book                                    | 2    
+Thesis / Dissertation                   | 1    
+
+--- 📅 Publications in 2013 ---
+Publication Type                        | Count
+----------------------------------------+------
+Chapter                                 | 58   
+Journal article                         | 49   
+Conference paper (text)                 | 11   
+Book                                    | 6    
+Other                                   | 6    
+Working/Discussion Paper                | 4    
+Report                                  | 4    
+Thesis / Dissertation                   | 2    
+Conference abstract/presentation slides | 1    
+Poster                                  | 1    
+Dataset                                 | 1    
+
+--- 📅 Publications in 2012 ---
+Publication Type                        | Count
+----------------------------------------+------
+Journal article                         | 39   
+Conference paper (text)                 | 21   
+Chapter                                 | 11   
+Working/Discussion Paper                | 8    
+Conference abstract/presentation slides | 7    
+Book                                    | 4    
+Report                                  | 3    
+
+--- 📅 Publications in 2011 ---
+Publication Type                        | Count
+----------------------------------------+------
+Journal article                         | 37   
+Chapter                                 | 29   
+Conference paper (text)                 | 23   
+Working/Discussion Paper                | 13   
+Book                                    | 8    
+Report                                  | 6    
+Thesis / Dissertation                   | 3    
+Other                                   | 3    
+Conference abstract/presentation slides | 2    
+Software / Code                         | 1    
+
+--- 📅 Publications in 2010 ---
+Publication Type         | Count
+-------------------------+------
+Journal article          | 48   
+Conference paper (text)  | 21   
+Chapter                  | 15   
+Report                   | 9    
+Working/Discussion Paper | 6    
+Book                     | 6    
+Software / Code          | 3    
+Thesis / Dissertation    | 1    
+Other                    | 1    
+
+--- 📅 Publications in 2009 ---
+Publication Type         | Count
+-------------------------+------
+Journal article          | 39   
+Chapter                  | 25   
+Conference paper (text)  | 17   
+Book                     | 2    
+Working/Discussion Paper | 1    
+Thesis / Dissertation    | 1    
+
+--- 📅 Publications in 2008 ---
+Publication Type                        | Count
+----------------------------------------+------
+Journal article                         | 37   
+Working/Discussion Paper                | 17   
+Chapter                                 | 15   
+Conference paper (text)                 | 8    
+Book                                    | 3    
+Report                                  | 3    
+Conference abstract/presentation slides | 1    
+Other                                   | 1    
+
+--- 📅 Publications in 2007 ---
+Publication Type                        | Count
+----------------------------------------+------
+Journal article                         | 15   
+Working/Discussion Paper                | 13   
+Chapter                                 | 10   
+Conference paper (text)                 | 9    
+Report                                  | 2    
+Conference abstract/presentation slides | 1    
+Book                                    | 1    
+Other                                   | 1    
+Exhibition                              | 1    
+
+--- 📅 Publications in 2006 ---
+Publication Type                        | Count
+----------------------------------------+------
+Journal article                         | 23   
+Chapter                                 | 20   
+Conference paper (text)                 | 7    
+Report                                  | 4    
+Conference abstract/presentation slides | 2    
+Book                                    | 2    
+
+--- 📅 Publications in 2005 ---
+Publication Type         | Count
+-------------------------+------
+Journal article          | 29   
+Conference paper (text)  | 15   
+Chapter                  | 12   
+Book                     | 4    
+Other                    | 4    
+Working/Discussion Paper | 3    
+Report                   | 1    
+
+--- 📅 Publications in 2004 ---
+Publication Type         | Count
+-------------------------+------
+Journal article          | 17   
+Conference paper (text)  | 13   
+Chapter                  | 5    
+Working/Discussion Paper | 5    
+Report                   | 5    
+Other                    | 2    
+Book                     | 1    
+
+--- 📅 Publications in 2003 ---
+Publication Type         | Count
+-------------------------+------
+Journal article          | 31   
+Chapter                  | 19   
+Working/Discussion Paper | 9    
+Book                     | 6    
+Report                   | 5    
+Conference paper (text)  | 4    
+Other                    | 2    
+
+--- 📅 Publications in 2002 ---
+Publication Type         | Count
+-------------------------+------
+Journal article          | 26   
+Report                   | 8    
+Chapter                  | 6    
+Working/Discussion Paper | 6    
+Book                     | 4    
+Conference paper (text)  | 3    
+Other                    | 1    
+
+--- 📅 Publications in 2001 ---
+Publication Type         | Count
+-------------------------+------
+Journal article          | 24   
+Chapter                  | 13   
+Conference paper (text)  | 9    
+Other                    | 7    
+Working/Discussion Paper | 5    
+Report                   | 4    
+Book                     | 2    
+
+--- 📅 Publications in 2000 ---
+Publication Type         | Count
+-------------------------+------
+Journal article          | 26   
+Conference paper (text)  | 6    
+Chapter                  | 6    
+Report                   | 5    
+Working/Discussion Paper | 4    
+Book                     | 4    
+
+--- 📅 Publications in 1999 ---
+Publication Type         | Count
+-------------------------+------
+Journal article          | 17   
+Chapter                  | 5    
+Report                   | 4    
+Working/Discussion Paper | 3    
+Conference paper (text)  | 1    
+Other                    | 1    
+
+--- 📅 Publications in 1998 ---
+Publication Type         | Count
+-------------------------+------
+Journal article          | 28   
+Working/Discussion Paper | 12   
+Chapter                  | 4    
+Other                    | 3    
+Book                     | 2    
+Report                   | 2    
+Thesis / Dissertation    | 2    
+Conference paper (text)  | 1    
+
+--- 📅 Publications in 1997 ---
+Publication Type        | Count
+------------------------+------
+Journal article         | 34   
+Conference paper (text) | 7    
+Other                   | 3    
+Chapter                 | 1    
+
+--- 📅 Publications in 1996 ---
+Publication Type        | Count
+------------------------+------
+Journal article         | 15   
+Chapter                 | 7    
+Conference paper (text) | 3    
+Book                    | 3    
+Report                  | 1    
+Internet publication    | 1    
+
+--- 📅 Publications in 1995 ---
+Publication Type         | Count
+-------------------------+------
+Journal article          | 13   
+Chapter                  | 5    
+Conference paper (text)  | 2    
+Working/Discussion Paper | 2    
+Book                     | 1    
+
+--- 📅 Publications in 1994 ---
+Publication Type        | Count
+------------------------+------
+Journal article         | 19   
+Chapter                 | 9    
+Conference paper (text) | 4    
+Book                    | 2    
+
+--- 📅 Publications in 1993 ---
+Publication Type | Count
+-----------------+------
+Journal article  | 8    
+Chapter          | 4    
+
+--- 📅 Publications in 1992 ---
+Publication Type        | Count
+------------------------+------
+Journal article         | 16   
+Conference paper (text) | 1    
+Chapter                 | 1    
+Report                  | 1    
+
+--- 📅 Publications in 1991 ---
+Publication Type        | Count
+------------------------+------
+Journal article         | 21   
+Chapter                 | 4    
+Conference paper (text) | 3    
+Book                    | 1    
+
+--- 📅 Publications in 1990 ---
+Publication Type         | Count
+-------------------------+------
+Journal article          | 12   
+Chapter                  | 7    
+Book                     | 2    
+Conference paper (text)  | 1    
+Working/Discussion Paper | 1    
+Report                   | 1    
+
+--- 📅 Publications in 1989 ---
+Publication Type        | Count
+------------------------+------
+Journal article         | 16   
+Chapter                 | 5    
+Conference paper (text) | 3    
+Report                  | 1    
+
+--- 📅 Publications in 1988 ---
+Publication Type         | Count
+-------------------------+------
+Journal article          | 15   
+Chapter                  | 3    
+Report                   | 2    
+Working/Discussion Paper | 1    
+
+--- 📅 Publications in 1987 ---
+Publication Type         | Count
+-------------------------+------
+Journal article          | 22   
+Chapter                  | 4    
+Conference paper (text)  | 2    
+Book                     | 2    
+Working/Discussion Paper | 1    
+Report                   | 1    
+
+--- 📅 Publications in 1986 ---
+Publication Type         | Count
+-------------------------+------
+Journal article          | 20   
+Working/Discussion Paper | 4    
+Conference paper (text)  | 2    
+Chapter                  | 2    
+Report                   | 2    
+Book                     | 1    
+
+--- 📅 Publications in 1985 ---
+Publication Type         | Count
+-------------------------+------
+Journal article          | 21   
+Working/Discussion Paper | 11   
+Chapter                  | 4    
+Book                     | 2    
+Report                   | 1    
+
+--- 📅 Publications in 1984 ---
+Publication Type         | Count
+-------------------------+------
+Journal article          | 22   
+Working/Discussion Paper | 6    
+Chapter                  | 3    
+Report                   | 3    
+
+--- 📅 Publications in 1983 ---
+Publication Type         | Count
+-------------------------+------
+Journal article          | 28   
+Working/Discussion Paper | 7    
+Chapter                  | 4    
+Book                     | 1    
+
+--- 📅 Publications in 1982 ---
+Publication Type         | Count
+-------------------------+------
+Journal article          | 24   
+Working/Discussion Paper | 3    
+
+--- 📅 Publications in 1981 ---
+Publication Type         | Count
+-------------------------+------
+Journal article          | 12   
+Chapter                  | 3    
+Book                     | 2    
+Working/Discussion Paper | 1    
+
+--- 📅 Publications in 1980 ---
+Publication Type         | Count
+-------------------------+------
+Journal article          | 22   
+Chapter                  | 4    
+Working/Discussion Paper | 1    
+Book                     | 1    
+
+--- 📅 Publications in 1979 ---
+Publication Type | Count
+-----------------+------
+Journal article  | 20   
+Chapter          | 3    
+Report           | 1    
+
+--- 📅 Publications in 1978 ---
+Publication Type | Count
+-----------------+------
+Journal article  | 9    
+Chapter          | 6    
+
+--- 📅 Publications in 1977 ---
+Publication Type         | Count
+-------------------------+------
+Journal article          | 6    
+Chapter                  | 5    
+Book                     | 3    
+Report                   | 2    
+Working/Discussion Paper | 1    
+
+--- 📅 Publications in 1976 ---
+Publication Type         | Count
+-------------------------+------
+Journal article          | 10   
+Conference paper (text)  | 2    
+Working/Discussion Paper | 2    
+Chapter                  | 1    
+Report                   | 1    
+
+--- 📅 Publications in 1975 ---
+Publication Type         | Count
+-------------------------+------
+Journal article          | 12   
+Chapter                  | 4    
+Report                   | 3    
+Conference paper (text)  | 2    
+Working/Discussion Paper | 1    
+Other                    | 1    
+
+--- 📅 Publications in 1974 ---
+Publication Type         | Count
+-------------------------+------
+Journal article          | 17   
+Working/Discussion Paper | 3    
+Chapter                  | 2    
+Book                     | 2    
+Report                   | 1    
+
+--- 📅 Publications in 1973 ---
+Publication Type         | Count
+-------------------------+------
+Journal article          | 9    
+Chapter                  | 6    
+Working/Discussion Paper | 3    
+Conference paper (text)  | 2    
+Report                   | 1    
+
+--- 📅 Publications in 1972 ---
+Publication Type         | Count
+-------------------------+------
+Journal article          | 15   
+Conference paper (text)  | 3    
+Working/Discussion Paper | 3    
+Chapter                  | 2    
+Book                     | 1    
+
+--- 📅 Publications in 1971 ---
+Publication Type         | Count
+-------------------------+------
+Journal article          | 11   
+Conference paper (text)  | 2    
+Chapter                  | 2    
+Working/Discussion Paper | 2    
+Book                     | 1    
+
+--- 📅 Publications in 1970 ---
+Publication Type         | Count
+-------------------------+------
+Journal article          | 10   
+Working/Discussion Paper | 2    
+Chapter                  | 1    
+Book                     | 1    
+
+--- 📅 Publications in 1969 ---
+Publication Type         | Count
+-------------------------+------
+Journal article          | 16   
+Working/Discussion Paper | 4    
+Chapter                  | 3    
+
+--- 📅 Publications in 1968 ---
+Publication Type | Count
+-----------------+------
+Journal article  | 4    
+Report           | 1    
+
+--- 📅 Publications in 1967 ---
+Publication Type | Count
+-----------------+------
+Journal article  | 4    
+
+--- 📅 Publications in 1966 ---
+Publication Type | Count
+-----------------+------
+Journal article  | 2    
+
+--- 📅 Publications in 1964 ---
+Publication Type | Count
+-----------------+------
+Journal article  | 3    
+
+--- 📅 Publications in 1963 ---
+Publication Type        | Count
+------------------------+------
+Journal article         | 3    
+Conference paper (text) | 1    
+
+--- 📅 Publications in 1962 ---
+Publication Type | Count
+-----------------+------
+Journal article  | 1    
+
+--- 📅 Publications in Unknown Year ---
+Publication Type                        | Count
+----------------------------------------+------
+Conference abstract/presentation slides | 19   
+Journal article                         | 10   
+Chapter                                 | 6    
+Working/Discussion Paper                | 3    
+Preprint                                | 2    
+Other                                   | 2    
+Dataset                                 | 2    
+Book                                    | 1    
+Report                                  | 1    
+Software / Code                         | 1    
+
+
+📅 Total Publications by Year:
+Year         | Count
+-------------+------
+2026         | 5    
+2025         | 178  
+2024         | 136  
+2023         | 161  
+2022         | 136  
+2021         | 194  
+2020         | 124  
+2019         | 130  
+2018         | 108  
+2017         | 110  
+2016         | 119  
+2015         | 132  
+2014         | 95   
+2013         | 143  
+2012         | 93   
+2011         | 125  
+2010         | 110  
+2009         | 85   
+2008         | 85   
+2007         | 53   
+2006         | 58   
+2005         | 68   
+2004         | 48   
+2003         | 76   
+2002         | 54   
+2001         | 64   
+2000         | 51   
+1999         | 31   
+1998         | 54   
+1997         | 45   
+1996         | 30   
+1995         | 23   
+1994         | 34   
+1993         | 12   
+1992         | 19   
+1991         | 29   
+1990         | 24   
+1989         | 25   
+1988         | 21   
+1987         | 32   
+1986         | 31   
+1985         | 39   
+1984         | 34   
+1983         | 40   
+1982         | 27   
+1981         | 18   
+1980         | 28   
+1979         | 24   
+1978         | 15   
+1977         | 17   
+1976         | 16   
+1975         | 23   
+1974         | 25   
+1973         | 21   
+1972         | 24   
+1971         | 18   
+1970         | 14   
+1969         | 23   
+1968         | 5    
+1967         | 4    
+1966         | 2    
+1964         | 3    
+1963         | 4    
+1962         | 1    
+Unknown Year | 47   
+
+
+📈 Grand Total Publications: 3623
+📂 Total Profiles Analyzed: 66
+
+👥 Compiling Publications per Profile per Year...
+
+📅 Publications in 2026:
+
+Staff Name        | Pubs
+------------------+-----
+Jens Kandt        | 2   
+Jon Reades        | 1   
+Ed Manley         | 1   
+Mark Tewdwr-Jones | 1   
+
+📅 Publications in 2025:
+
+Staff Name                | Pubs
+--------------------------+-----
+Duncan Wilson             | 18  
+Michael Batty             | 15  
+Andy Hudson-Smith         | 14  
+Ed Manley                 | 13  
+Esra Suel                 | 13  
+Valerio Signorelli        | 12  
+Chen Zhong                | 8   
+Carmen Cabrera Arnau      | 8   
+Mark Tewdwr-Jones         | 7   
+Leah Lovett               | 5   
+Duncan Hay                | 5   
+Yikang Wang               | 4   
+Changwha Oh               | 3   
+Jon Reades                | 3   
+Duncan Smith              | 3   
+Huanfa Chen               | 3   
+Bonnie Boyana Buyuklieva  | 3   
+Juste Raimbault           | 3   
+Max Nathan                | 3   
+Martin De Jode            | 3   
+Adam Dennett              | 2   
+Elsa Arcaute              | 2   
+Jens Kandt                | 2   
+Bowen Zhang               | 2   
+Fulvio Lopane             | 2   
+Laura Sheppard            | 2   
+Beatrice Taylor           | 2   
+Alan Wilson               | 2   
+Susannah Cramer-Greenbaum | 2   
+Laura Mazzarino           | 1   
+Steven Gray               | 1   
+Jonathan Bourne           | 1   
+Neave O'clery             | 1   
+Mengdie Zhuang            | 1   
+Andrew Maclachlan         | 1   
+Yuna Lee                  | 1   
+Adam(zhengzi) Zhou        | 1   
+Richard Milton            | 1   
+Aude Vuilliomenet         | 1   
+Ollie Ballinger           | 1   
+Sukankana Chakraborty     | 1   
+Adham Enaya               | 1   
+Jishan Duan               | 1   
+
+📅 Publications in 2024:
+
+Staff Name                | Pubs
+--------------------------+-----
+Michael Batty             | 24  
+Ed Manley                 | 11  
+Chen Zhong                | 9   
+Esra Suel                 | 9   
+Adam Dennett              | 8   
+Huanfa Chen               | 5   
+Andy Hudson-Smith         | 5   
+Valerio Signorelli        | 4   
+Beatrice Taylor           | 4   
+Leah Lovett               | 3   
+Bonnie Boyana Buyuklieva  | 3   
+Jonathan Bourne           | 3   
+Carmen Cabrera Arnau      | 3   
+Juste Raimbault           | 3   
+Alan Wilson               | 3   
+Yikang Wang               | 3   
+Susannah Cramer-Greenbaum | 3   
+Jon Reades                | 2   
+Elsa Arcaute              | 2   
+Duncan Wilson             | 2   
+Carlos Molinero           | 2   
+Steven Gray               | 2   
+Max Nathan                | 2   
+Ollie Ballinger           | 2   
+Martin De Jode            | 2   
+Sukankana Chakraborty     | 2   
+Laura Mazzarino           | 1   
+Changwha Oh               | 1   
+Thomas Evans              | 1   
+Duncan Smith              | 1   
+Mark Tewdwr-Jones         | 1   
+Duncan Hay                | 1   
+Bowen Zhang               | 1   
+Neave O'clery             | 1   
+Mengdie Zhuang            | 1   
+Andrew Maclachlan         | 1   
+Fulvio Lopane             | 1   
+Adam(zhengzi) Zhou        | 1   
+Richard Milton            | 1   
+Wénlán Zhang              | 1   
+Claire Dooley             | 1   
+
+📅 Publications in 2023:
+
+Staff Name                | Pubs
+--------------------------+-----
+Michael Batty             | 15  
+Ed Manley                 | 14  
+Huanfa Chen               | 12  
+Esra Suel                 | 11  
+Adam Dennett              | 8   
+Duncan Wilson             | 8   
+Jon Reades                | 6   
+Bonnie Boyana Buyuklieva  | 5   
+Carmen Cabrera Arnau      | 5   
+Beatrice Taylor           | 5   
+Chen Zhong                | 4   
+Ollie Ballinger           | 4   
+Susannah Cramer-Greenbaum | 4   
+Elsa Arcaute              | 3   
+Mark Tewdwr-Jones         | 3   
+Sarah Wise                | 3   
+Andy Hudson-Smith         | 3   
+Valerio Signorelli        | 3   
+Max Nathan                | 3   
+Sophie Ayling             | 3   
+Alan Wilson               | 3   
+Jishan Duan               | 3   
+Claire Dooley             | 3   
+Leah Lovett               | 2   
+Duncan Smith              | 2   
+Steven Gray               | 2   
+Juste Raimbault           | 2   
+Neave O'clery             | 2   
+Andrew Maclachlan         | 2   
+Fulvio Lopane             | 2   
+Richard Milton            | 2   
+Laura Mazzarino           | 1   
+Clara Peiret-Garcia       | 1   
+Changwha Oh               | 1   
+Robin Morphet             | 1   
+Jens Kandt                | 1   
+Duncan Hay                | 1   
+Jonathan Bourne           | 1   
+Bowen Zhang               | 1   
+Mengdie Zhuang            | 1   
+Adam(zhengzi) Zhou        | 1   
+Laura Sheppard            | 1   
+Yikang Wang               | 1   
+Wénlán Zhang              | 1   
+Sukankana Chakraborty     | 1   
+
+📅 Publications in 2022:
+
+Staff Name               | Pubs
+-------------------------+-----
+Michael Batty            | 19  
+Ed Manley                | 12  
+Chen Zhong               | 9   
+Max Nathan               | 8   
+Neave O'clery            | 8   
+Esra Suel                | 6   
+Jon Reades               | 4   
+Elsa Arcaute             | 4   
+Jens Kandt               | 4   
+Andy Hudson-Smith        | 4   
+Duncan Hay               | 4   
+Juste Raimbault          | 4   
+Yikang Wang              | 4   
+Adam Dennett             | 3   
+Mark Tewdwr-Jones        | 3   
+Huanfa Chen              | 3   
+Bonnie Boyana Buyuklieva | 3   
+Carmen Cabrera Arnau     | 3   
+Ollie Ballinger          | 3   
+Claire Dooley            | 3   
+Leah Lovett              | 2   
+Duncan Smith             | 2   
+Valerio Signorelli       | 2   
+Fulvio Lopane            | 2   
+Adam(zhengzi) Zhou       | 2   
+Sophie Ayling            | 2   
+Robin Morphet            | 1   
+Duncan Wilson            | 1   
+Carlos Molinero          | 1   
+Sarah Wise               | 1   
+Steven Gray              | 1   
+Nicolas Palominos Ortega | 1   
+Jonathan Bourne          | 1   
+Bowen Zhang              | 1   
+Mengdie Zhuang           | 1   
+Andrew Maclachlan        | 1   
+Samuel Heroy             | 1   
+Beatrice Taylor          | 1   
+Alan Wilson              | 1   
+
+📅 Publications in 2021:
+
+Staff Name                | Pubs
+--------------------------+-----
+Mark Tewdwr-Jones         | 29  
+Michael Batty             | 28  
+Juste Raimbault           | 12  
+Ed Manley                 | 10  
+Adam Dennett              | 7   
+Neave O'clery             | 7   
+Chen Zhong                | 6   
+Adam(zhengzi) Zhou        | 6   
+Robin Morphet             | 5   
+Leah Lovett               | 5   
+Thomas Evans              | 5   
+Esra Suel                 | 5   
+Jon Reades                | 4   
+Jens Kandt                | 4   
+Duncan Wilson             | 4   
+Duncan Smith              | 4   
+Huanfa Chen               | 4   
+Max Nathan                | 4   
+Andy Hudson-Smith         | 3   
+Duncan Hay                | 3   
+Valerio Signorelli        | 3   
+Nicolas Palominos Ortega  | 3   
+Mengdie Zhuang            | 3   
+Samuel Heroy              | 3   
+Richard Milton            | 3   
+Claire Dooley             | 3   
+Sarah Wise                | 2   
+Steven Gray               | 2   
+Bonnie Boyana Buyuklieva  | 2   
+Jonathan Bourne           | 2   
+Carmen Cabrera Arnau      | 2   
+Elsa Arcaute              | 1   
+Carlos Molinero           | 1   
+Bowen Zhang               | 1   
+Andrew Maclachlan         | 1   
+Fulvio Lopane             | 1   
+Alan Wilson               | 1   
+Aude Vuilliomenet         | 1   
+Yikang Wang               | 1   
+Martin De Jode            | 1   
+Sukankana Chakraborty     | 1   
+Susannah Cramer-Greenbaum | 1   
+
+📅 Publications in 2020:
+
+Staff Name               | Pubs
+-------------------------+-----
+Michael Batty            | 17  
+Juste Raimbault          | 16  
+Ed Manley                | 12  
+Elsa Arcaute             | 7   
+Mark Tewdwr-Jones        | 7   
+Jon Reades               | 6   
+Robin Morphet            | 5   
+Chen Zhong               | 4   
+Andy Hudson-Smith        | 4   
+Esra Suel                | 4   
+Adam Dennett             | 3   
+Duncan Smith             | 3   
+Carmen Cabrera Arnau     | 3   
+Max Nathan               | 3   
+Claire Dooley            | 3   
+Thomas Evans             | 2   
+Jens Kandt               | 2   
+Sarah Wise               | 2   
+Nicolas Palominos Ortega | 2   
+Neave O'clery            | 2   
+Mengdie Zhuang           | 2   
+Adam(zhengzi) Zhou       | 2   
+Gerry Casey              | 2   
+Leah Lovett              | 1   
+Duncan Wilson            | 1   
+Carlos Molinero          | 1   
+Huanfa Chen              | 1   
+Duncan Hay               | 1   
+Bonnie Boyana Buyuklieva | 1   
+Jonathan Bourne          | 1   
+Fulvio Lopane            | 1   
+Alan Wilson              | 1   
+Yikang Wang              | 1   
+Martin De Jode           | 1   
+
+📅 Publications in 2019:
+
+Staff Name               | Pubs
+-------------------------+-----
+Michael Batty            | 24  
+Juste Raimbault          | 12  
+Andy Hudson-Smith        | 7   
+Ed Manley                | 6   
+Mark Tewdwr-Jones        | 6   
+Alan Wilson              | 6   
+Leah Lovett              | 5   
+Elsa Arcaute             | 5   
+Valerio Signorelli       | 5   
+Sarah Wise               | 4   
+Richard Milton           | 4   
+Jon Reades               | 3   
+Adam Dennett             | 3   
+Jens Kandt               | 3   
+Duncan Hay               | 3   
+Bonnie Boyana Buyuklieva | 3   
+Max Nathan               | 3   
+Duncan Wilson            | 2   
+Duncan Smith             | 2   
+Huanfa Chen              | 2   
+Chen Zhong               | 2   
+Jonathan Bourne          | 2   
+Mengdie Zhuang           | 2   
+Fulvio Lopane            | 2   
+Martin De Jode           | 2   
+Robin Morphet            | 1   
+Thomas Evans             | 1   
+Carlos Molinero          | 1   
+Steven Gray              | 1   
+Nicolas Palominos Ortega | 1   
+Carmen Cabrera Arnau     | 1   
+Neave O'clery            | 1   
+Adam(zhengzi) Zhou       | 1   
+Esra Suel                | 1   
+Sukankana Chakraborty    | 1   
+Claire Dooley            | 1   
+Gerry Casey              | 1   
+
+📅 Publications in 2018:
+
+Staff Name               | Pubs
+-------------------------+-----
+Michael Batty            | 16  
+Andy Hudson-Smith        | 9   
+Adam Dennett             | 8   
+Ed Manley                | 7   
+Jon Reades               | 6   
+Sarah Wise               | 6   
+Juste Raimbault          | 6   
+Alan Wilson              | 6   
+Jens Kandt               | 4   
+Max Nathan               | 4   
+Richard Milton           | 4   
+Esra Suel                | 4   
+Elsa Arcaute             | 3   
+Mark Tewdwr-Jones        | 3   
+Chen Zhong               | 3   
+Duncan Hay               | 3   
+Bonnie Boyana Buyuklieva | 3   
+Steven Gray              | 2   
+Duncan Smith             | 1   
+Huanfa Chen              | 1   
+Valerio Signorelli       | 1   
+Nicolas Palominos Ortega | 1   
+Neave O'clery            | 1   
+Mengdie Zhuang           | 1   
+Samuel Heroy             | 1   
+Martin De Jode           | 1   
+Sukankana Chakraborty    | 1   
+Claire Dooley            | 1   
+Gerry Casey              | 1   
+
+📅 Publications in 2017:
+
+Staff Name         | Pubs
+-------------------+-----
+Michael Batty      | 25  
+Alan Wilson        | 18  
+Elsa Arcaute       | 8   
+Juste Raimbault    | 7   
+Gerry Casey        | 6   
+Ed Manley          | 4   
+Adam Dennett       | 4   
+Chen Zhong         | 4   
+Max Nathan         | 4   
+Andrew Maclachlan  | 4   
+Duncan Smith       | 3   
+Carlos Molinero    | 3   
+Andy Hudson-Smith  | 3   
+Esra Suel          | 3   
+Jon Reades         | 2   
+Mark Tewdwr-Jones  | 2   
+Sarah Wise         | 2   
+Mengdie Zhuang     | 2   
+Jens Kandt         | 1   
+Duncan Wilson      | 1   
+Huanfa Chen        | 1   
+Valerio Signorelli | 1   
+Paul Mullins       | 1   
+Fulvio Lopane      | 1   
+
+📅 Publications in 2016:
+
+Staff Name               | Pubs
+-------------------------+-----
+Michael Batty            | 17  
+Alan Wilson              | 16  
+Gerry Casey              | 10  
+Andy Hudson-Smith        | 8   
+Jon Reades               | 7   
+Adam Dennett             | 6   
+Chen Zhong               | 6   
+Esra Suel                | 6   
+Ed Manley                | 5   
+Thomas Evans             | 5   
+Max Nathan               | 5   
+Valerio Signorelli       | 4   
+Jens Kandt               | 3   
+Duncan Smith             | 3   
+Leah Lovett              | 2   
+Elsa Arcaute             | 2   
+Sarah Wise               | 2   
+Steven Gray              | 2   
+Mengdie Zhuang           | 2   
+Robin Morphet            | 1   
+Mark Tewdwr-Jones        | 1   
+Carlos Molinero          | 1   
+Huanfa Chen              | 1   
+Bonnie Boyana Buyuklieva | 1   
+Paul Mullins             | 1   
+Neave O'clery            | 1   
+Richard Milton           | 1   
+
+📅 Publications in 2015:
+
+Staff Name               | Pubs
+-------------------------+-----
+Michael Batty            | 29  
+Alan Wilson              | 17  
+Ed Manley                | 9   
+Max Nathan               | 7   
+Chen Zhong               | 6   
+Andy Hudson-Smith        | 6   
+Sarah Wise               | 5   
+Steven Gray              | 5   
+Esra Suel                | 5   
+Gerry Casey              | 5   
+Elsa Arcaute             | 4   
+Jens Kandt               | 4   
+Duncan Smith             | 4   
+Adam Dennett             | 3   
+Mark Tewdwr-Jones        | 3   
+Carlos Molinero          | 3   
+Martin De Jode           | 3   
+Robin Morphet            | 2   
+Thomas Evans             | 2   
+Bonnie Boyana Buyuklieva | 2   
+Richard Milton           | 2   
+Jon Reades               | 1   
+Hrishikesh Ballal        | 1   
+Huanfa Chen              | 1   
+Valerio Signorelli       | 1   
+Juste Raimbault          | 1   
+Neave O'clery            | 1   
+
+📅 Publications in 2014:
+
+Staff Name               | Pubs
+-------------------------+-----
+Michael Batty            | 18  
+Andy Hudson-Smith        | 11  
+Alan Wilson              | 10  
+Max Nathan               | 8   
+Jon Reades               | 5   
+Ed Manley                | 5   
+Mark Tewdwr-Jones        | 5   
+Chen Zhong               | 5   
+Valerio Signorelli       | 5   
+Martin De Jode           | 4   
+Robin Morphet            | 3   
+Leah Lovett              | 2   
+Elsa Arcaute             | 2   
+Duncan Smith             | 2   
+Sarah Wise               | 2   
+Esra Suel                | 2   
+Adam Dennett             | 1   
+Thomas Evans             | 1   
+Steven Gray              | 1   
+Nicolas Palominos Ortega | 1   
+Juste Raimbault          | 1   
+Claire Dooley            | 1   
+
+📅 Publications in 2013:
+
+Staff Name         | Pubs
+-------------------+-----
+Michael Batty      | 48  
+Alan Wilson        | 14  
+Mark Tewdwr-Jones  | 13  
+Andy Hudson-Smith  | 10  
+Steven Gray        | 7   
+Jon Reades         | 6   
+Max Nathan         | 6   
+Ed Manley          | 5   
+Adam Dennett       | 5   
+Duncan Smith       | 4   
+Valerio Signorelli | 4   
+Richard Milton     | 4   
+Gerry Casey        | 3   
+Duncan Wilson      | 2   
+Sarah Wise         | 2   
+Chen Zhong         | 2   
+Martin De Jode     | 2   
+Robin Morphet      | 1   
+Elsa Arcaute       | 1   
+Thomas Evans       | 1   
+Jens Kandt         | 1   
+Neave O'clery      | 1   
+Claire Dooley      | 1   
+
+📅 Publications in 2012:
+
+Staff Name         | Pubs
+-------------------+-----
+Michael Batty      | 27  
+Andy Hudson-Smith  | 14  
+Alan Wilson        | 13  
+Steven Gray        | 10  
+Jon Reades         | 7   
+Chen Zhong         | 6   
+Gerry Casey        | 3   
+Robin Morphet      | 2   
+Ed Manley          | 2   
+Duncan Smith       | 2   
+Sarah Wise         | 2   
+Martin De Jode     | 2   
+Leah Lovett        | 1   
+Valerio Signorelli | 1   
+Max Nathan         | 1   
+
+📅 Publications in 2011:
+
+Staff Name         | Pubs
+-------------------+-----
+Michael Batty      | 38  
+Mark Tewdwr-Jones  | 25  
+Alan Wilson        | 12  
+Max Nathan         | 9   
+Andy Hudson-Smith  | 8   
+Jon Reades         | 5   
+Adam Dennett       | 5   
+Ed Manley          | 3   
+Carlos Molinero    | 3   
+Valerio Signorelli | 3   
+Jens Kandt         | 2   
+Duncan Smith       | 2   
+Steven Gray        | 2   
+Esra Suel          | 2   
+Gerry Casey        | 2   
+Elsa Arcaute       | 1   
+Sarah Wise         | 1   
+Richard Milton     | 1   
+Martin De Jode     | 1   
+
+📅 Publications in 2010:
+
+Staff Name        | Pubs
+------------------+-----
+Michael Batty     | 26  
+Mark Tewdwr-Jones | 20  
+Andy Hudson-Smith | 17  
+Adam Dennett      | 14  
+Alan Wilson       | 12  
+Jon Reades        | 4   
+Martin De Jode    | 4   
+Ed Manley         | 2   
+Max Nathan        | 2   
+Richard Milton    | 2   
+Robin Morphet     | 1   
+Elsa Arcaute      | 1   
+Jens Kandt        | 1   
+Duncan Smith      | 1   
+Sarah Wise        | 1   
+Steven Gray       | 1   
+Chen Zhong        | 1   
+
+📅 Publications in 2009:
+
+Staff Name        | Pubs
+------------------+-----
+Michael Batty     | 42  
+Andy Hudson-Smith | 12  
+Mark Tewdwr-Jones | 6   
+Alan Wilson       | 5   
+Duncan Wilson     | 4   
+Carlos Molinero   | 4   
+Richard Milton    | 4   
+Daryl Lloyd       | 2   
+Duncan Smith      | 2   
+Jon Reades        | 1   
+Adam Dennett      | 1   
+Elsa Arcaute      | 1   
+Max Nathan        | 1   
+
+📅 Publications in 2008:
+
+Staff Name        | Pubs
+------------------+-----
+Michael Batty     | 32  
+Andy Hudson-Smith | 12  
+Mark Tewdwr-Jones | 11  
+Max Nathan        | 6   
+Richard Milton    | 6   
+Alan Wilson       | 6   
+Adam Dennett      | 4   
+Elsa Arcaute      | 2   
+Duncan Wilson     | 2   
+Duncan Smith      | 2   
+Jon Reades        | 1   
+Carlos Molinero   | 1   
+
+📅 Publications in 2007:
+
+Staff Name        | Pubs
+------------------+-----
+Michael Batty     | 21  
+Mark Tewdwr-Jones | 11  
+Andy Hudson-Smith | 8   
+Richard Milton    | 3   
+Jon Reades        | 2   
+Max Nathan        | 2   
+Alan Wilson       | 2   
+Daryl Lloyd       | 1   
+Leah Lovett       | 1   
+Duncan Wilson     | 1   
+Gerry Casey       | 1   
+
+📅 Publications in 2006:
+
+Staff Name        | Pubs
+------------------+-----
+Mark Tewdwr-Jones | 26  
+Michael Batty     | 23  
+Max Nathan        | 3   
+Elsa Arcaute      | 2   
+Alan Wilson       | 2   
+Duncan Wilson     | 1   
+Andy Hudson-Smith | 1   
+
+📅 Publications in 2005:
+
+Staff Name        | Pubs
+------------------+-----
+Michael Batty     | 31  
+Mark Tewdwr-Jones | 22  
+Andy Hudson-Smith | 11  
+Richard Milton    | 2   
+Max Nathan        | 1   
+Alan Wilson       | 1   
+
+📅 Publications in 2004:
+
+Staff Name        | Pubs
+------------------+-----
+Mark Tewdwr-Jones | 23  
+Michael Batty     | 21  
+Elsa Arcaute      | 1   
+Max Nathan        | 1   
+Richard Milton    | 1   
+Martin De Jode    | 1   
+
+📅 Publications in 2003:
+
+Staff Name        | Pubs
+------------------+-----
+Michael Batty     | 34  
+Mark Tewdwr-Jones | 30  
+Andy Hudson-Smith | 6   
+Max Nathan        | 3   
+Alan Wilson       | 2   
+Daryl Lloyd       | 1   
+
+📅 Publications in 2002:
+
+Staff Name        | Pubs
+------------------+-----
+Mark Tewdwr-Jones | 21  
+Michael Batty     | 15  
+Andy Hudson-Smith | 9   
+Max Nathan        | 4   
+Alan Wilson       | 3   
+Daryl Lloyd       | 2   
+
+📅 Publications in 2001:
+
+Staff Name        | Pubs
+------------------+-----
+Mark Tewdwr-Jones | 32  
+Michael Batty     | 21  
+Andy Hudson-Smith | 10  
+Max Nathan        | 1   
+
+📅 Publications in 2000:
+
+Staff Name        | Pubs
+------------------+-----
+Mark Tewdwr-Jones | 19  
+Michael Batty     | 17  
+Andy Hudson-Smith | 7   
+Max Nathan        | 3   
+Alan Wilson       | 3   
+Martin De Jode    | 2   
+
+📅 Publications in 1999:
+
+Staff Name        | Pubs
+------------------+-----
+Michael Batty     | 18  
+Mark Tewdwr-Jones | 4   
+Max Nathan        | 3   
+Andy Hudson-Smith | 2   
+Alan Wilson       | 2   
+Martin De Jode    | 2   
+
+📅 Publications in 1998:
+
+Staff Name        | Pubs
+------------------+-----
+Michael Batty     | 21  
+Andy Hudson-Smith | 15  
+Mark Tewdwr-Jones | 11  
+Duncan Wilson     | 4   
+Alan Wilson       | 2   
+Gerry Casey       | 1   
+
+📅 Publications in 1997:
+
+Staff Name        | Pubs
+------------------+-----
+Michael Batty     | 21  
+Andy Hudson-Smith | 9   
+Mark Tewdwr-Jones | 6   
+Martin De Jode    | 6   
+Duncan Wilson     | 2   
+Alan Wilson       | 1   
+
+📅 Publications in 1996:
+
+Staff Name        | Pubs
+------------------+-----
+Michael Batty     | 17  
+Alan Wilson       | 4   
+Duncan Wilson     | 3   
+Mark Tewdwr-Jones | 3   
+Martin De Jode    | 3   
+
+📅 Publications in 1995:
+
+Staff Name        | Pubs
+------------------+-----
+Michael Batty     | 14  
+Martin De Jode    | 3   
+Mark Tewdwr-Jones | 2   
+Alan Wilson       | 2   
+Gerry Casey       | 2   
+
+📅 Publications in 1994:
+
+Staff Name        | Pubs
+------------------+-----
+Michael Batty     | 22  
+Alan Wilson       | 11  
+Mark Tewdwr-Jones | 1   
+
+📅 Publications in 1993:
+
+Staff Name    | Pubs
+--------------+-----
+Michael Batty | 8   
+Alan Wilson   | 4   
+
+📅 Publications in 1992:
+
+Staff Name    | Pubs
+--------------+-----
+Michael Batty | 13  
+Alan Wilson   | 6   
+
+📅 Publications in 1991:
+
+Staff Name    | Pubs
+--------------+-----
+Michael Batty | 20  
+Alan Wilson   | 9   
+
+📅 Publications in 1990:
+
+Staff Name    | Pubs
+--------------+-----
+Michael Batty | 12  
+Alan Wilson   | 12  
+
+📅 Publications in 1989:
+
+Staff Name    | Pubs
+--------------+-----
+Michael Batty | 18  
+Alan Wilson   | 7   
+
+📅 Publications in 1988:
+
+Staff Name    | Pubs
+--------------+-----
+Michael Batty | 18  
+Alan Wilson   | 3   
+
+📅 Publications in 1987:
+
+Staff Name    | Pubs
+--------------+-----
+Michael Batty | 17  
+Alan Wilson   | 15  
+
+📅 Publications in 1986:
+
+Staff Name    | Pubs
+--------------+-----
+Alan Wilson   | 19  
+Michael Batty | 12  
+
+📅 Publications in 1985:
+
+Staff Name    | Pubs
+--------------+-----
+Alan Wilson   | 26  
+Michael Batty | 13  
+
+📅 Publications in 1984:
+
+Staff Name    | Pubs
+--------------+-----
+Alan Wilson   | 22  
+Michael Batty | 12  
+
+📅 Publications in 1983:
+
+Staff Name    | Pubs
+--------------+-----
+Michael Batty | 22  
+Alan Wilson   | 18  
+
+📅 Publications in 1982:
+
+Staff Name    | Pubs
+--------------+-----
+Michael Batty | 21  
+Alan Wilson   | 6   
+
+📅 Publications in 1981:
+
+Staff Name    | Pubs
+--------------+-----
+Alan Wilson   | 11  
+Michael Batty | 7   
+
+📅 Publications in 1980:
+
+Staff Name    | Pubs
+--------------+-----
+Michael Batty | 15  
+Alan Wilson   | 13  
+
+📅 Publications in 1979:
+
+Staff Name    | Pubs
+--------------+-----
+Michael Batty | 14  
+Alan Wilson   | 10  
+
+📅 Publications in 1978:
+
+Staff Name    | Pubs
+--------------+-----
+Alan Wilson   | 8   
+Michael Batty | 7   
+
+📅 Publications in 1977:
+
+Staff Name    | Pubs
+--------------+-----
+Alan Wilson   | 11  
+Michael Batty | 6   
+
+📅 Publications in 1976:
+
+Staff Name    | Pubs
+--------------+-----
+Michael Batty | 10  
+Alan Wilson   | 6   
+
+📅 Publications in 1975:
+
+Staff Name    | Pubs
+--------------+-----
+Michael Batty | 12  
+Alan Wilson   | 10  
+Robin Morphet | 1   
+
+📅 Publications in 1974:
+
+Staff Name    | Pubs
+--------------+-----
+Alan Wilson   | 13  
+Michael Batty | 12  
+
+📅 Publications in 1973:
+
+Staff Name    | Pubs
+--------------+-----
+Michael Batty | 11  
+Alan Wilson   | 10  
+
+📅 Publications in 1972:
+
+Staff Name    | Pubs
+--------------+-----
+Michael Batty | 12  
+Alan Wilson   | 12  
+
+📅 Publications in 1971:
+
+Staff Name        | Pubs
+------------------+-----
+Alan Wilson       | 9   
+Michael Batty     | 8   
+Mark Tewdwr-Jones | 1   
+
+📅 Publications in 1970:
+
+Staff Name    | Pubs
+--------------+-----
+Alan Wilson   | 10  
+Michael Batty | 4   
+
+📅 Publications in 1969:
+
+Staff Name    | Pubs
+--------------+-----
+Alan Wilson   | 16  
+Michael Batty | 7   
+
+📅 Publications in 1968:
+
+Staff Name    | Pubs
+--------------+-----
+Alan Wilson   | 4   
+Michael Batty | 1   
+
+📅 Publications in 1967:
+
+Staff Name  | Pubs
+------------+-----
+Alan Wilson | 4   
+
+📅 Publications in 1966:
+
+Staff Name  | Pubs
+------------+-----
+Alan Wilson | 2   
+
+📅 Publications in 1964:
+
+Staff Name  | Pubs
+------------+-----
+Alan Wilson | 3   
+
+📅 Publications in 1963:
+
+Staff Name  | Pubs
+------------+-----
+Alan Wilson | 4   
+
+📅 Publications in 1962:
+
+Staff Name  | Pubs
+------------+-----
+Alan Wilson | 1   
+
+📅 Publications in Unknown Year:
+
+Staff Name         | Pubs
+-------------------+-----
+Andy Hudson-Smith  | 13  
+Chen Zhong         | 8   
+Valerio Signorelli | 5   
+Michael Batty      | 2   
+Adam Dennett       | 2   
+Duncan Wilson      | 2   
+Mark Tewdwr-Jones  | 2   
+Duncan Hay         | 2   
+Bowen Zhang        | 2   
+Alan Wilson        | 2   
+Daryl Lloyd        | 1   
+Ed Manley          | 1   
+Steven Gray        | 1   
+Fulvio Lopane      | 1   
+Yikang Wang        | 1   
+Esra Suel          | 1   
+Adham Enaya        | 1   
+

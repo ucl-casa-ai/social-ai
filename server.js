@@ -11,11 +11,12 @@ import { getOrcidProfileWithToken } from './orcid-client.js';
 import { generateBlueskyPosts, generateLinkedInPost, generateCompletion, generateBlogPost, SYSTEM_PROMPTS } from './open-webui-api.js';
 import { initDb, searchChunks } from './db.js';
 import { processDocument, getEmbedding } from './ingest.js';
-
+import { startMcpServer } from './mcp-server.js';
+import { startA2aServer } from './a2a-server.js';
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.APP_PORT || 3001;
 
 // Set up __dirname for ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -143,7 +144,7 @@ app.get('/api/orcid/:orcidId', async (req, res) => {
     return res.status(400).json({ error: 'Invalid ORCID iD format.' });
   }
 
-  const cacheFilePath = path.join(cacheDir, "orcid",`${orcidId}.json`);
+  const cacheFilePath = path.join(cacheDir, "orcid", `${orcidId}.json`);
 
   // 1. Check cache first
   try {
@@ -179,53 +180,53 @@ app.get('/api/orcid/:orcidId', async (req, res) => {
 
 // RAG Helper function to inject context
 async function enhanceContextWithRag(contextStr, userId) {
-    let itemData = {};
-    let publicUrl = null;
+  let itemData = {};
+  let publicUrl = null;
 
+  try {
+    itemData = JSON.parse(contextStr);
+    if (itemData.repositoryPdfUrl) {
+      publicUrl = itemData.repositoryPdfUrl;
+    } else if (itemData.publicUrls && itemData.publicUrls.length > 0) {
+      const pdfLink = itemData.publicUrls.find(l => l.toLowerCase().endsWith('.pdf'));
+      publicUrl = pdfLink || itemData.publicUrls[0];
+    } else if (itemData.publicUrl) {
+      publicUrl = itemData.publicUrl;
+    }
+  } catch (error) {
+    // Fallback: use Regex for robust extraction in case of trailing artifacts
+    const pdfMatch = contextStr.match(/"repositoryPdfUrl"\s*:\s*"([^"]+)"/);
+    if (pdfMatch) publicUrl = pdfMatch[1];
+    else {
+      const arrMatch = contextStr.match(/"publicUrls"\s*:\s*\[\s*"([^"]+)"/);
+      if (arrMatch) publicUrl = arrMatch[1];
+    }
+  }
+
+  if (!publicUrl) return contextStr;
+  const safeUserId = userId || 'anonymous';
+
+  try {
+    console.log(`Starting RAG pipeline for ${publicUrl} (User: ${safeUserId})`);
     try {
-        itemData = JSON.parse(contextStr);
-        if (itemData.repositoryPdfUrl) {
-            publicUrl = itemData.repositoryPdfUrl;
-        } else if (itemData.publicUrls && itemData.publicUrls.length > 0) {
-            const pdfLink = itemData.publicUrls.find(l => l.toLowerCase().endsWith('.pdf'));
-            publicUrl = pdfLink || itemData.publicUrls[0];
-        } else if (itemData.publicUrl) {
-            publicUrl = itemData.publicUrl;
-        }
-    } catch (error) {
-        // Fallback: use Regex for robust extraction in case of trailing artifacts
-        const pdfMatch = contextStr.match(/"repositoryPdfUrl"\s*:\s*"([^"]+)"/);
-        if (pdfMatch) publicUrl = pdfMatch[1];
-        else {
-            const arrMatch = contextStr.match(/"publicUrls"\s*:\s*\[\s*"([^"]+)"/);
-            if (arrMatch) publicUrl = arrMatch[1];
-        }
+      await processDocument(publicUrl, safeUserId);
+    } catch (e) {
+      console.log(`Ingestion info: ${e.message}`);
     }
-    
-    if (!publicUrl) return contextStr;
-    const safeUserId = userId || 'anonymous';
-    
-    try {    
-        console.log(`Starting RAG pipeline for ${publicUrl} (User: ${safeUserId})`);
-        try {
-            await processDocument(publicUrl, safeUserId);
-        } catch(e) {
-            console.log(`Ingestion info: ${e.message}`);
-        }
-        
-        const titleAndDesc = (itemData.title || "") + " " + (itemData.description || itemData.abstract || "");
-        const queryEmbedding = await getEmbedding(titleAndDesc);
-        const chunks = await searchChunks(safeUserId, publicUrl, queryEmbedding, 4);
-        
-        if (chunks.length > 0) {
-            const extractedText = chunks.map(c => c.chunk_text).join('\n\n---\n\n');
-            console.log(`Found ${chunks.length} chunks from DB for context injection.`);
-            return { text: `${contextStr}\n\n<EXTRACTED_CONTEXT>\n${extractedText}\n</EXTRACTED_CONTEXT>`, ragApplied: true };
-        }
-    } catch(err) {
-        console.error("RAG Enhancement Error:", err);
+
+    const titleAndDesc = (itemData.title || "") + " " + (itemData.description || itemData.abstract || "");
+    const queryEmbedding = await getEmbedding(titleAndDesc);
+    const chunks = await searchChunks(safeUserId, publicUrl, queryEmbedding, 4);
+
+    if (chunks.length > 0) {
+      const extractedText = chunks.map(c => c.chunk_text).join('\n\n---\n\n');
+      console.log(`Found ${chunks.length} chunks from DB for context injection.`);
+      return { text: `${contextStr}\n\n<EXTRACTED_CONTEXT>\n${extractedText}\n</EXTRACTED_CONTEXT>`, ragApplied: true };
     }
-    return { text: contextStr, ragApplied: false };
+  } catch (err) {
+    console.error("RAG Enhancement Error:", err);
+  }
+  return { text: contextStr, ragApplied: false };
 }
 
 // API endpoint to generate Bluesky posts
@@ -316,17 +317,17 @@ app.post('/api/generate/prompt', async (req, res) => {
 // API endpoint to log user rating
 import { updateModelRating } from './db.js';
 app.post('/api/rate', async (req, res) => {
-    const { logId, rating } = req.body;
-    if (!logId || typeof rating !== 'number') {
-        return res.status(400).json({ error: 'logId and numeric rating required.' });
-    }
-    try {
-        await updateModelRating(logId, rating);
-        res.json({ success: true });
-    } catch(err) {
-        console.error('Rating update failed:', err);
-        res.status(500).json({ error: 'Failed to update rating in database.' });
-    }
+  const { logId, rating } = req.body;
+  if (!logId || typeof rating !== 'number') {
+    return res.status(400).json({ error: 'logId and numeric rating required.' });
+  }
+  try {
+    await updateModelRating(logId, rating);
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Rating update failed:', err);
+    res.status(500).json({ error: 'Failed to update rating in database.' });
+  }
 });
 
 // API endpoint to generate an image via ComfyUI
@@ -467,4 +468,12 @@ app.post('/api/generate/image', async (req, res) => {
 
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
+  console.log('Starting bundled agent servers...');
+  startMcpServer().catch(err => console.error("Failed to start MCP server:", err));
+  startA2aServer().catch(err => console.error("Failed to start A2A server:", err));
 });
+
+// // Start the agent servers automatically alongside the web app
+// console.log('Starting bundled agent servers...');
+// startMcpServer().catch(err => console.error("Failed to start MCP server:", err));
+// startA2aServer().catch(err => console.error("Failed to start A2A server:", err));

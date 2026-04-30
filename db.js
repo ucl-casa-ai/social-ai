@@ -49,7 +49,7 @@ export async function initDb() {
         response_content TEXT NOT NULL
       );
     `);
-    
+
     // Optional: create index (useful for large scale, but fine to just have for now)
     await client.query(`
       CREATE INDEX IF NOT EXISTS document_chunks_embedding_idx ON document_chunks USING hnsw (embedding vector_cosine_ops);

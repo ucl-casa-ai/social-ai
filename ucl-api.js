@@ -356,3 +356,64 @@ export async function getProfile(userId) {
 
   return transformApiData(profileData, publicationsData, teachingData, grantsData);
 }
+
+/**
+ * Searches UCL profiles based on a query text and optional department.
+ * @param {string} query - The search term.
+ * @param {string} [department] - Optional department to filter by.
+ * @returns {Promise<object>} The search results.
+ */
+export async function searchProfiles(query, department = null) {
+  const url = 'https://profiles.ucl.ac.uk/api/users';
+
+  const filters = [
+    {
+      name: "department",
+      matchDocsWithMissingValues: !department,
+      useValuesToFilter: !!department
+    },
+    {
+      name: "tags",
+      matchDocsWithMissingValues: true,
+      useValuesToFilter: false
+    },
+    {
+      name: "customFilterFour",
+      matchDocsWithMissingValues: true,
+      useValuesToFilter: false
+    },
+    {
+      name: "customFilterFive",
+      matchDocsWithMissingValues: true,
+      useValuesToFilter: false
+    }
+  ];
+
+  if (department) {
+    filters[0].values = [department];
+  }
+
+  const payload = {
+    params: {
+      by: "text",
+      category: "user",
+      text: query
+    },
+    filters: filters
+  };
+
+  const options = {
+    method: 'POST',
+    headers: {
+      'accept': 'application/json',
+      'content-type': 'application/json',
+    },
+    body: JSON.stringify(payload),
+  };
+
+  const response = await fetch(url, options);
+  if (!response.ok) {
+    throw new Error(`Failed to search UCL profiles for "${query}": ${response.statusText}`);
+  }
+  return response.json();
+}

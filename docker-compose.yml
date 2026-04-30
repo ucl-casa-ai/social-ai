@@ -14,5 +14,27 @@ services:
       - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
 
+  web-app:
+    build: .
+    container_name: social_ai_web
+    command: node server.js
+    ports:
+      - "8888:3001"   # Web App
+      - "3002:3002"   # MCP Server
+      - "4000:4000"   # A2A Server
+    env_file:
+      - .env
+    environment:
+      - APP_PORT=3001
+      - PORT=3002
+      - A2A_PORT=4000
+      - DATABASE_URL=postgresql://ucl_user:ucl_password@postgres:5432/social_ai
+    depends_on:
+       - postgres
+    # Keep stdin open if you want the bundled MCP/A2A stdio to be interactive
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
+
 volumes:
   postgres_data:
