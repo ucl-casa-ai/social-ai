@@ -16,7 +16,7 @@ import { startA2aServer } from './a2a-server.js';
 dotenv.config();
 
 const app = express();
-const port = process.env.APP_PORT || 3001;
+const port = process.env.APP_PORT || 3000;
 
 // Set up __dirname for ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -472,8 +472,3 @@ app.listen(port, () => {
   startMcpServer().catch(err => console.error("Failed to start MCP server:", err));
   startA2aServer().catch(err => console.error("Failed to start A2A server:", err));
 });
-
-// // Start the agent servers automatically alongside the web app
-// console.log('Starting bundled agent servers...');
-// startMcpServer().catch(err => console.error("Failed to start MCP server:", err));
-// startA2aServer().catch(err => console.error("Failed to start A2A server:", err));
