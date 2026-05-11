@@ -147,8 +147,9 @@ export async function startMcpServer() {
   const sessions = new Map();
 
   app.get("/sse", async (req, res) => {
+    console.log('/sse Received:', req.body);
     const sseServer = createServer();
-    const transport = new SSEServerTransport("/message", res);
+    const transport = new SSEServerTransport("/messages", res);
     await sseServer.connect(transport);
 
     sessions.set(transport.sessionId, transport);
@@ -158,7 +159,8 @@ export async function startMcpServer() {
     });
   });
 
-  app.post("/message", async (req, res) => {
+  app.post("/messages", async (req, res) => {
+    console.log('/messages Received:', req.body);
     const sessionId = req.query.sessionId;
     const transport = sessions.get(sessionId);
 

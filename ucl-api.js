@@ -118,6 +118,7 @@ async function fetchGrantsFromUcl(userId) {
     body: JSON.stringify({
       objectId: userId,
       objectType: 'user',
+      category: 'user',
       pagination: { perPage: 100, startFrom: 0 },
       sort: 'dateDesc',
       favouritesFirst: true,
@@ -227,10 +228,15 @@ async function fetchGrants(userId, orcidId = null) {
   if (orcidId && process.env.ORCID_ACCESS_TOKEN) {
     try {
       console.log(`ORCID iD ${orcidId} found. Fetching grants from ORCID.`);
-      return await fetchGrantsFromOrcid(orcidId);
+      const orcidGrants = await fetchGrantsFromOrcid(orcidId);
+      
+      if (orcidGrants && orcidGrants.resource && orcidGrants.resource.length > 0) {
+        return orcidGrants;
+      } else {
+        console.log(`ORCID has no grants for ${orcidId}. Falling back to UCL Profiles API.`);
+      }
     } catch (error) {
       console.error(`Failed to fetch grants from ORCID for ${orcidId}. Falling back to UCL Profiles API. Error: ${error.message}`);
-      return fetchGrantsFromUcl(userId);
     }
   }
   return fetchGrantsFromUcl(userId);
@@ -393,27 +399,59 @@ export async function searchProfiles(query, department = null) {
     filters[0].values = [department];
   }
 
-  const payload = {
-    params: {
-      by: "text",
-      category: "user",
-      text: query
-    },
-    filters: filters
-  };
+  let allResults = [];
+  let startFrom = 0;
+  const perPage = 100;
+  let hasMore = true;
+  let baseResponseData = null;
 
-  const options = {
-    method: 'POST',
-    headers: {
-      'accept': 'application/json',
-      'content-type': 'application/json',
-    },
-    body: JSON.stringify(payload),
-  };
+  while (hasMore) {
+    const payload = {
+      params: {
+        by: "text",
+        category: "user",
+        text: query
+      },
+      filters: filters,
+      pagination: { perPage, startFrom }
+    };
 
-  const response = await fetch(url, options);
-  if (!response.ok) {
-    throw new Error(`Failed to search UCL profiles for "${query}": ${response.statusText}`);
+    const options = {
+      method: 'POST',
+      headers: {
+        'accept': 'application/json',
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    };
+
+    const response = await fetch(url, options);
+    if (!response.ok) {
+      throw new Error(`Failed to search UCL profiles for "${query}" at offset ${startFrom}: ${response.statusText}`);
+    }
+    
+    const data = await response.json();
+    if (!baseResponseData) {
+      baseResponseData = data;
+    }
+    
+    const resource = data.resource || [];
+    allResults.push(...resource);
+
+    if (resource.length < perPage) {
+      hasMore = false;
+    } else {
+      startFrom += perPage;
+    }
   }
-  return response.json();
+
+  if (baseResponseData) {
+    baseResponseData.resource = allResults;
+    // Optionally update pagination object to reflect the total fetched
+    if (baseResponseData.pagination) {
+      baseResponseData.pagination.perPage = allResults.length;
+    }
+  }
+  
+  return baseResponseData || { resource: allResults };
 }

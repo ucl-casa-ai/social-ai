@@ -25,11 +25,14 @@ const __dirname = path.dirname(__filename);
 // --- Create cache directory on startup ---
 const cacheDir = path.join(__dirname, 'cache');
 const profileCacheDir = path.join(cacheDir, 'profiles');
+const orcidCacheDir = path.join(cacheDir, 'orcid');
 try {
   await fs.mkdir(cacheDir, { recursive: true });
   await fs.mkdir(profileCacheDir, { recursive: true });
+  await fs.mkdir(orcidCacheDir, { recursive: true });
   console.log('Cache directory is set up at', cacheDir);
   console.log('Profile cache directory is set up at', profileCacheDir);
+  console.log('ORCID cache directory is set up at', orcidCacheDir);
 } catch (error) {
   console.error('Could not create cache directory.', error);
 }
@@ -121,8 +124,41 @@ app.get('/api/profile/:userId', async (req, res) => {
   const { userId } = req.params;
   console.log(`Received request for user ID: ${userId}`);
 
+  const cacheFilePath = path.join(profileCacheDir, `${userId}.json`);
+
+  // Ensure the directory exists before attempting to read/write
+  try {
+    await fs.mkdir(path.dirname(cacheFilePath), { recursive: true });
+  } catch (err) {
+    console.error(`Could not create cache directory for ${userId}:`, err);
+  }
+
+  // 1. Check cache first
+  try {
+    const cachedData = await fs.readFile(cacheFilePath, 'utf-8');
+    console.log(`Serving UCL profile for ${userId} from cache.`);
+    res.setHeader('Content-Type', 'application/json');
+    res.send(cachedData);
+    return;
+  } catch (error) {
+    if (error.code !== 'ENOENT') {
+      console.error(`Error reading profile cache file for ${userId}:`, error);
+    }
+    console.log(`Cache miss for UCL profile ${userId}. Fetching from API.`);
+  }
+
+  // 2. If cache miss, fetch from the UCL API
   try {
     const profileData = await getProfile(userId);
+    
+    // 3. Save to cache for future requests
+    try {
+      await fs.writeFile(cacheFilePath, JSON.stringify(profileData, null, 2), 'utf-8');
+      console.log(`Successfully cached UCL profile for ${userId}.`);
+    } catch (writeErr) {
+      console.error(`Failed to write profile cache for ${userId}:`, writeErr);
+    }
+
     res.json(profileData);
   } catch (error) {
     console.log(error);
@@ -145,6 +181,13 @@ app.get('/api/orcid/:orcidId', async (req, res) => {
   }
 
   const cacheFilePath = path.join(cacheDir, "orcid", `${orcidId}.json`);
+
+  // Ensure the directory exists before attempting to read/write
+  try {
+    await fs.mkdir(path.dirname(cacheFilePath), { recursive: true });
+  } catch (err) {
+    console.error(`Could not create cache directory for ${orcidId}:`, err);
+  }
 
   // 1. Check cache first
   try {
