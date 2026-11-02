@@ -1,6 +1,6 @@
 # Use an official Node.js runtime as a parent image
 # Using a slim version to keep the image size down
-FROM node:20-slim
+FROM node:lts-alpine
 
 # Set the working directory in the container
 WORKDIR /usr/src/app
